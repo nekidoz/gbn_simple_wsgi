@@ -12,7 +12,6 @@
     <p> Нажмите на элементе списка, чтобы увидеть его содержимое </p>
     <ul>
         {% for key, value in params.items() %}
-            {% фильтр `|e` - экранирует HTML %}
             <li> <a href="{{ key|e }}"> {{ key|e }} </a> : {{ value|e }}</li>
         {% endfor %}
     </ul>
