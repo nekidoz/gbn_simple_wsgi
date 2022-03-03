@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!-- param: title - заголовок страницы
             params - словарь с контентом, который надо вывести
+            param - параметр, по которому надо дать детализацию
 -->
 <html lang="ru">
 <head>
@@ -12,10 +13,17 @@
 <body>
 
     <h1>{{title}}</h1>
-    <p> Нажмите на элементе списка, чтобы увидеть его содержимое </p>
+
+    <h3>
+        <p>Параметр: <bold>{{ param }} </bold> </p>
+        <p>Значение: <bold>{{ params[param] }} </bold> </p>
+    </h3>
+    <br>
+
+    <p> Полный список параметров запроса </p>
     <ul>
         {% for key, value in params.items() %}
-            <li> <a href="{{ key|e }}"> {{ key|e }} </a> : {{ value|e }}</li>
+            <li> {{ key|e }} : {{ value|e }}</li>
         {% endfor %}
     </ul>
 
