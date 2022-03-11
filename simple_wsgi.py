@@ -1,7 +1,6 @@
 from Templator import render
-from urls import urls
+from page_controllers import page_controller
 from urllib.parse import unquote
-import subprocess
 
 """
 Чтобы запустить приложение, наберите: gunicorn simple_wsgi:application
@@ -37,9 +36,6 @@ TEMPLATE_PARAMETER = "parameter.html"   # Страница индивидуал�
 TEMPLATE_404 = "error404.html"          # Страница сообщения об ошибке URL
 TEMPLATE_EXTENSION = ".html"            # Расширение файла страницы
 
-# Константы page-контроллеров
-PAGE_CONTROLLER_EXTENSION = ""          # Расширение файлов page-контроллеров для добавления к именам из urls
-
 # Прочие константы
 EMAIL_ADMIN = "nekidoz@yandex.ru"
 
@@ -59,6 +55,8 @@ def parse_page_path(path: str):
 def parse_query_params(query: str) -> dict:
     param_dict = {}
     if query:
+        # Перед раскодированием избавимся от знаков '+', которыми заменены пробелы
+        query = query.replace('+', ' ')
         params = query.split(ENVIRON_QUERY_SEP)             # Получение списка параметров запроса
         for param in params:
             key, value = param.split(ENVIRON_QUERY_KV_SEP)  # Получение ключа и значения для каждого параметра
@@ -91,22 +89,11 @@ def application(environ, start_response):
     query_dict = parse_query_params(query_str)                  # Получить массив параметров запроса GET/POST
     print("Query parameters ({}): {}".format(environ[ENVIRON_REQ_METHOD], query_dict))
 
-    # Смотрим, есть ли такой page-контроллер в urls
-    page_controller = urls.get('/'.join(token for token in path_array)) if path_array else ""
-    print(path_array)
-    print(page_controller)
-    if page_controller:         # Если есть, пробуем запустить page-контроллер
-        try:
-            subprocess.run(PATH_PAGE_CONTROLLERS + page_controller + PAGE_CONTROLLER_EXTENSION)
-        except FileNotFoundError:
-            try:
-                response = render(PATH_TEMPLATES + TEMPLATE_404,
-                                  title="Страница не найдена", parameter=environ[ENVIRON_PATH_KEY])
-            except FileNotFoundError:
-                response = htmlWrap("Страница {} не найдена".format(environ[ENVIRON_PATH_KEY]))
-            exitCode = '404 not found'
-
-    elif len(path_array) > 2:     # Принимаем только URL 1 уровня от корня
+                                    # Смотрим, есть ли такой page-контроллер
+    exitCode, response = page_controller('/'.join(token for token in path_array), environ)
+    if exitCode:
+        pass    # Если есть, ничего не делаем - все сделал page controller
+    elif len(path_array) > 2:       # Принимаем только URL 1 уровня от корня
         try:
             response = render(PATH_TEMPLATES + TEMPLATE_404,
                               title="Страница не найдена", parameter=environ[ENVIRON_PATH_KEY])
@@ -114,7 +101,7 @@ def application(environ, start_response):
             response = htmlWrap("Страница {} не найдена".format(environ[ENVIRON_PATH_KEY]))
         exitCode = '404 not found'
 
-    elif len(path_array) > 1:   # Страница параметра или произвольная страница
+    elif len(path_array) > 1:       # Страница параметра или произвольная страница
         path_array[1] = path_array[1].strip()
         if path_array[1] in environ:    # Есть такой параметр
             try:
@@ -124,7 +111,7 @@ def application(environ, start_response):
                 response = htmlWrap("Параметр '{}' : {}".format(path_array[1], environ[path_array[1]]))
             exitCode = '200 OK'
 
-        else:                           # Нет такого параметра - поищем страницу
+        else:                       # Нет такого параметра - поищем страницу
             try:
                 response = render(PATH_STATIC + path_array[1] + TEMPLATE_EXTENSION)
                 exitCode = '200 OK'
@@ -152,7 +139,7 @@ def application(environ, start_response):
                                     .format(EMAIL_ADMIN))
             exitCode = '404 not found'
 
-# сначала в функцию start_response передаем код ответа и заголовки
+    # сначала в функцию start_response передаем код ответа и заголовки
     start_response(exitCode, [('Content-Type', 'text/html')])
     # возвращаем тело ответа в виде списка байтов
     #return [b'Hello world from a simple WSGI application!']
