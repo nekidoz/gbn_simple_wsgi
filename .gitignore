@@ -1,3 +1,4 @@
 __pycache__
 .idea/
 templates/work.html
+pages/contact_messages/

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Параметр processing_url - URL, куда отправлять содержимое формы методом POST -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,20 +13,25 @@
     <p>Чтобы связаться с нами или просто оставить отзыв, заполните поля ниже и нажмите "Отправить"</p>
 
     <!-- Форма с аргументами запроса для метода GET -->
-    <form action="/" method="post">
+    <form action="{{ processing_url }}" method="post">
         <table style="border: 1px solid black">
             <caption style="background:Black;color:White">ЗАПОЛНИТЕ ФОРМУ</caption>
-            <tr><td style="text-align:right"><label for="name">Имя</label></td>
-                <td style="text-align:left"><input size="60" name="name" id="name" value="Феодосий Петрович"></td></tr>
-            <tr><td style="text-align:right"><label for="email">Email</label></td>
-                <td style="text-align:left"><input size="60" name="email" id="email" value="feo@sao.la"></td></tr>
+            <tr><td style="text-align:right"><label for="name">Имя *</label></td>
+                <td style="text-align:left">
+                    <input size="60" name="name" id="name" value="Феодосий Петрович" required>
+                </td></tr>
+            <tr><td style="text-align:right"><label for="email">Email *</label></td>
+                <td style="text-align:left">
+                    <input type="email" name="email" id="email" value="feo@sao.la" required>
+                </td></tr>
             <tr><td style="text-align:right"><label for="title">Тема</label></td>
                 <td style="text-align:left"><input size="60" name="title" id="title" value="Тук тук"></td></tr>
-            <tr><td style="text-align:right"><label for="msg">Сообщение</label></td>
-                <td style="text-align:left"><textarea cols="60" rows="10" name="msg" id="msg">
+            <tr><td style="text-align:right"><label for="msg">Сообщение *</label></td>
+                <td style="text-align:left"><textarea cols="60" rows="10" name="msg" id="msg" required>
                     Ну шо?
                 </textarea></td>
             </tr>
+            <tr><td colspan="2" style="text-align:left">* - обязательное поле</td></tr>
             <tr><td colspan="2" style="text-align:center"><button>Отправить</button></td></tr>
         </table>
     </form>
