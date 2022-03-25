@@ -1,4 +1,4 @@
 __pycache__
 .idea/
-templates/work.html
-pages/contact_messages/
+app/contact_messages/
+obsolete/

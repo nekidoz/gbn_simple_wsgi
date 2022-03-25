@@ -11,12 +11,12 @@
 
 </head>
 <body>
-    <p><a href="/contact">Обратная связь</a><a href="/test">Тест</a></p>
+    <p><a href="/">Домой</a></p>
 
     <h1>{{title}}</h1>
 
     <!-- Форма с аргументами запроса для метода GET -->
-    <form action="/" method="get">
+    <form action="" method="get">
         <table style="border: 1px solid black">
             <caption style="background:Black;color:White">Тест запроса методом GET</caption>
             <tr><td>
@@ -30,7 +30,7 @@
     </form>
 
     <!-- Форма с аргументами запроса для метода POST -->
-    <form action="/" method="post">
+    <form action="" method="post">
         <table style="border: 1px solid black">
             <caption style="background:Black;color:White">Тест запроса методом POST</caption>
             <tr><td>
@@ -70,7 +70,7 @@
 
             {# фильтр `|e` - экранирует HTML #}
             <tr style="background:{{ rowColor }}">
-                <td style="text-align:right"><a href="{{ key|e }}"> {{ key|e }} </a></td>
+                <td style="text-align:right"><a href="{{ params['PATH_INFO'] }}/{{ key|e }}"> {{ key|e }} </a></td>
                 <td style="text-align:left"> {{ value|e }} </td>
             </tr>
         {% endfor %}
