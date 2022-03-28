@@ -1,9 +1,22 @@
 # REFERENCE DESIGN
 from jinja2 import Template  # Используем шаблонизатор Jinja2
+from dataclasses import dataclass
+from enum import Enum
+from pprint import pprint
 
 from framework.request import Request
 from framework.response import Response
 from framework import settings
+from framework.singleton import Singleton
+
+# Структура каталогов приложения
+PATH_TEMPLATES = "framework/templates/"                    # путь к шаблонам служебных html-страниц
+
+# Admin Page templates
+TEMPLATE_404 = "error404.html"  # Страница сообщения об ошибке URL
+TEMPLATE_INDEX = "index.html"  # Главная страница
+TEMPLATE_PARAMETER = "parameter.html"  # Страница индивидуальных параемтров
+
 
 class View:
     pass
@@ -13,7 +26,7 @@ class View:
 # ATTRIBUTES:
 # body - body string wrapped in minimal HTML headers and footers
 # status_code - 200 by default
-class Minimal(View):
+class MinimalView(View):
     GENERIC_PREFIX = '<!DOCTYPE html><html lang="ru"><head><meta charset="' + \
                      settings.HTML_ENCODING + \
                      '"></head><body>'
@@ -36,7 +49,7 @@ class Minimal(View):
 # ATTRIBUTES:
 # body - rendered body after init()
 # status_code - 200 by default if template found, 404 if not
-class Render(View):
+class SimpleView(View):
 
     def __init__(self,
                  template_name: str, status_code: int=settings.HTTP_CODE_OK,
@@ -58,7 +71,7 @@ class Render(View):
         except FileNotFoundError:
             if not raise_filenotfound:
                 # Template not found
-                self.body = Minimal("Страница {} не найдена".format(template_name)).body
+                self.body = MinimalView("Страница {} не найдена".format(template_name)).body
                 self.status_code = settings.HTTP_CODE_NOTFOUND
             else:
                 # Throw FileNotFoundError - needed when this function is called for 404 page
@@ -74,14 +87,174 @@ class View404(View):
     def run(request: Request, *args, **kwargs):
 
         try:
-            return Render(status_code=settings.HTTP_CODE_NOTFOUND,
-                          template_name=settings.PATH_TEMPLATES + settings.TEMPLATE_404,
-                          raise_filenotfound=True,
-                          title="Страница не найдена", parameter=request.path).run(request)
+            return SimpleView(status_code=settings.HTTP_CODE_NOTFOUND,
+                              template_name=PATH_TEMPLATES + TEMPLATE_404,
+                              raise_filenotfound=True,
+                              title="Страница не найдена", parameter=request.path).run(request)
         except FileNotFoundError:
-            return Minimal(status_code=settings.HTTP_CODE_NOTFOUND,
-                           body="Страница {} не найдена".format(request.path))
+            return MinimalView(status_code=settings.HTTP_CODE_NOTFOUND,
+                               body="Страница {} не найдена".format(request.path))
 
+
+# *********************************************** BASE VIEW *******************************************************
+
+
+# BaseView sections enumeration
+class BaseViewSection(Enum):
+    base_view = 1
+    header = 2
+    footer = 3
+    left_sidebar = 4
+    right_sidebar = 5
+
+# BaseView section description data class
+@dataclass
+class BaseViewTagData:
+    template_tag: str           # jinja2 template tag
+    html_include_tag: str       # jinja2 variable (tag) to include rendered html
+    default_template: str       # default template file
+
+
+# BaseView class layout object used by all BaseView-inheriting classes for rendering base templates,
+# and thus it is Singleton
+# PARAMS:
+# status_code - http status code of the last template load operation
+# status_message - status message of the last template load operation
+# isInit - __init__() already called flag
+class BaseViewLayout(Singleton):
+    _PATH_BASEVIEW_TEMPLATES = "framework/templates/baseview/"   # путь к шаблонам html-страниц темплейтов BaseView
+    _template_settings = {
+        BaseViewSection.base_view:
+            BaseViewTagData(template_tag='base_view_template', html_include_tag='',
+                            default_template=_PATH_BASEVIEW_TEMPLATES + "base_view_template.html"),
+        BaseViewSection.header:
+            BaseViewTagData(template_tag='header_template', html_include_tag='header_html_include',
+                            default_template=_PATH_BASEVIEW_TEMPLATES + "header_template.html"),
+        BaseViewSection.footer:
+            BaseViewTagData(template_tag='footer_template', html_include_tag='footer_html_include',
+                            default_template=_PATH_BASEVIEW_TEMPLATES + "footer_template.html"),
+        BaseViewSection.left_sidebar:
+            BaseViewTagData(template_tag='left_sidebar_template', html_include_tag='left_sidebar_html_include',
+                            default_template=_PATH_BASEVIEW_TEMPLATES + "left_sidebar_template.html"),
+        BaseViewSection.right_sidebar:
+            BaseViewTagData(template_tag='right_sidebar_template', html_include_tag='right_sidebar_html_include',
+                            default_template=_PATH_BASEVIEW_TEMPLATES + "right_sidebar_template.html")
+    }
+    _templates = {}                                 # templates to pass to renderer - currently empty
+    _html_includes = {}                             # html includes to pass to renderer - currently empty
+
+    # REQUIRED (call super() if redefined): Assign default base view template and include templates
+    def __init__(self, set_default_templates:bool = True, raise_filenotfound: bool = False):
+
+        # Only allow to init once
+        if hasattr(self, 'isInit'):
+            return
+        # Load all the default templates: base and includes - abort if file not found; initialize html includes
+        for section, section_data in self._template_settings.items():
+            self._html_includes[section_data.html_include_tag] = ""                 # init html include field
+            if set_default_templates or section == BaseViewSection.base_view:       # Base view displayed anyway
+                if not self.set_template(section, raise_filenotfound=raise_filenotfound):
+                    return
+            else:
+                self._templates[section_data.template_tag] = None
+        # All templates loaded - return OK
+        self.isInit = True                  # 'Already initialized' flag
+
+    # NOTE: load template from template_path/template_file_name or default template
+    # into template dictionary entry; raise exception on file not found condition if requested
+    def set_template(self, section: BaseViewSection,
+                     template_file_name: str = None, template_path: str = None,
+                     clear_html_include: bool = False, raise_filenotfound: bool = False) -> bool:
+        section_data = self._template_settings[section]
+        template_name = ((template_path if template_path else "") + template_file_name) if template_file_name \
+            else section_data.default_template
+        try:
+            # Открываем шаблон по имени
+            with open(template_name, encoding=settings.HTML_ENCODING) as f:
+                # Читаем
+                self._templates[section_data.template_tag] = Template(f.read())
+                if clear_html_include:          # Clear section's html include field if requested
+                    self._html_includes[section_data.html_include_tag] = ""
+                self.status_code = settings.HTTP_CODE_OK
+                self.status_message = "OK"
+                return True
+        except FileNotFoundError:
+            # Template not found
+            self.status_code = settings.HTTP_CODE_NOTFOUND
+            self.status_message = template_name
+            # Throw FileNotFoundError if requested
+            if raise_filenotfound:
+                raise FileNotFoundError
+            else:
+                return False
+
+    def render_html_include(self, section: BaseViewSection,
+                            template_file_name: str, template_path: str = None,
+                            clear_template: bool = False, raise_filenotfound: bool = False, **kwargs) -> bool:
+        section_data = self._template_settings[section]
+        template_name = (template_path if template_path else "") + template_file_name
+        try:
+            # Открываем шаблон по имени
+            with open(template_name, encoding=settings.HTML_ENCODING) as f:
+                # Читаем
+                template = Template(f.read())
+            # Render the template
+            self._html_includes[section_data.html_include_tag] = template.render(**kwargs)
+            if clear_template:                  # Clear section's template if requested
+                self._templates[section_data.template_tag] = None
+            self.status_code = settings.HTTP_CODE_OK
+            self.status_message = "OK"
+            return True
+        except FileNotFoundError:
+            self.status_code = settings.HTTP_CODE_NOTFOUND
+            self.status_message = template_name
+            if not raise_filenotfound:
+                # Template not found
+                self._html_includes[section_data.html_include_tag] = "Страница {} не найдена".format(template_name)
+                return False
+            else:
+                # Throw FileNotFoundError
+                raise FileNotFoundError
+
+    @property
+    def templates(self):
+        return self._templates
+
+    @property
+    def html_includes(self):
+        return self._html_includes
+
+
+class BaseView:
+
+    def __init__(self,
+                 template_name: str, status_code: int=settings.HTTP_CODE_OK,
+                 raise_filenotfound: bool = False, **kwargs):
+
+        try:
+            # Открываем шаблон по имени
+            with open(template_name, encoding=settings.HTML_ENCODING) as f:
+                # Читаем
+                template = Template(f.read())
+
+            # Get BaseViewLayout singleton instance
+            layout = BaseViewLayout()
+            # Render the template tree
+            self.body = template.render(**layout.templates, **layout.html_includes, **kwargs)
+            self.status_code = status_code
+        except FileNotFoundError:
+            if not raise_filenotfound:
+                # Template not found
+                self.body = MinimalView("Страница {} не найдена".format(template_name)).body
+                self.status_code = settings.HTTP_CODE_NOTFOUND
+            else:
+                # Throw FileNotFoundError - needed when this function is called for 404 page
+                raise FileNotFoundError
+
+    def run(self, request: Request, *args, **kwargs) -> Response:
+        return Response(status_code=self.status_code, body=self.body)
+
+# *********************************************** BASE VIEW end ***************************************************
 
 # Admin view - HTTP parameters and all that
 # PARAMETERS:
@@ -96,21 +269,21 @@ class Admin(View):
         # Есть такой параметр WSGI/HTTP
         if request.path_array[len(request.path_array)-1] in request.environ:
             try:
-                return Render(template_name=settings.PATH_TEMPLATES + settings.TEMPLATE_PARAMETER,
-                              raise_filenotfound=True,
-                              title='Параметр запроса',
-                              params=request.environ,
-                              param=request.path_array[len(request.path_array)-1]).run(request)
+                return SimpleView(template_name=PATH_TEMPLATES + TEMPLATE_PARAMETER,
+                                  raise_filenotfound=True,
+                                  title='Параметр запроса',
+                                  params=request.environ,
+                                  param=request.path_array[len(request.path_array)-1]).run(request)
             except FileNotFoundError:
-                return Minimal("Параметр '{}' : {}"
-                               .format(request.path_array[2],
+                return MinimalView("Параметр '{}' : {}"
+                                   .format(request.path_array[2],
                                        request.environ[request.path_array[len(request.path_array)-1]])).run()
 
         # Корневая страница админки (e.g. /admin)
         elif request.path_array[len(request.path_array)-1] == self.admin_root:
-            return Render(settings.PATH_TEMPLATES + settings.TEMPLATE_INDEX,
-                          title='АДМИН - Главная страница',
-                          params=request.environ, query_params=request.query_params).run(request)
+            return SimpleView(PATH_TEMPLATES + TEMPLATE_INDEX,
+                              title='АДМИН - Главная страница',
+                              params=request.environ, query_params=request.query_params).run(request)
 
         else:
-            return Minimal("Это неизвестная страница админки: {}".format(request.path)).run()
+            return MinimalView("Это неизвестная страница админки: {}".format(request.path)).run()

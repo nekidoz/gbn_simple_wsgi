@@ -1,20 +1,10 @@
-<!DOCTYPE html>
 <!-- param: urls - list of URLs for main menu; uses attributes:
                     - name - as a menu entry caption,
                     - url - as a link
-            title - page title
 -->
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-</head>
-<body>
 
-    <h1>{{ title }}</h1>
+    <h1>Навигация</h1>
 
     {% for url in urls %}
         <p><a href="{{ url.url }}">{{ url.name }}</a></p>
     {% endfor %}
-</body>
-</html>

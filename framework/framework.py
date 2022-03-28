@@ -4,14 +4,17 @@ from framework import settings
 from framework.views import View404
 from framework.urls import admin_urls
 from pprint import pprint
+from copy import deepcopy
 
 
 # ATTRIBUTES:
 # urls - project URL array (initialized at init()
 # request - parsed WSGI request (initialized at call()
 # PARAMETERS:
-# urls - array of user app urls
+# urls - array of user app urls for routing
 # use_admin - whether to use admin; if true, its urls from urls.py are appended to user urls
+# PROPERTIES:
+# get_clean_urls - clean user app urls for navigation (without wildcards)
 #
 # router processes full URL paths and wildcard (e.g. /someurl/*) URLs (see urls.py for example)
 class Framework:
@@ -23,7 +26,7 @@ class Framework:
             for url in admin_urls:
                 if not any(user_url for user_url in self.urls if user_url.url == url.url):
                     self.urls.append(url)
-        pprint(self.urls)
+        #pprint(self.urls)
 
     # PARAMETERS:
     # environ: словарь данных от сервера
@@ -65,3 +68,20 @@ class Framework:
             else:
                 if url.url == self.request.path:
                     return url.view
+
+    # return urls list with wildcards removed from urls, optionally - only of menu items
+    def get_clean_urls(self, for_menu_only: bool = False):
+        clean_urls = []
+        for url in self.urls:
+            if url.inMenu or not for_menu_only:
+                clean_urls.append(url)
+                if len(url.url) >= 2 and url.url[-2:] == "/*":
+                    clean_urls[len(clean_urls)-1].url = url.url[:-2]
+        """    
+        # deepcopy variant - when menu items option was not present
+        clean_urls = deepcopy(self.urls)
+        for url in clean_urls:
+            if len(url.url) >= 2 and url.url[-2:] == "/*":
+                url.url = url.url[:-2]
+        """
+        return clean_urls

@@ -1,19 +1,31 @@
 # REFERENCE DESIGN
 from framework.response import Response
 from framework.request import Request
-from framework.views import View, Render, Minimal
+from framework.views import View, BaseView, SimpleView, MinimalView
+from framework.singleton import Singleton
+from framework.urls import Url
 
 # Imports for Contact class
 from datetime import datetime
 import os
 import settings
 
-# Main page controller
-class Index(View):
-    HTML_TEMPLATE = settings.PATH_APP + "index.html"             # Page template
+
+# Main page controller  - SINGLETON! Initialize it with menu urls when Framework is initialized!
+class Index(View, Singleton):
+    HTML_TEMPLATE = settings.PATH_APP + "index_body.html"             # Page template
+
+    # Initialize urls property with the passed array, or with empty array if not yet initialized
+    def __init__(self, urls: [Url] = None):
+        if urls is not None:
+            self.urls = urls
+        elif not hasattr(self, 'urls'):
+            self.urls = []
+        #print("urls {}: param: {} self: {}".format(id(self), urls, self.urls))
 
     def run(self, request: Request, *args, **kwargs) -> Response:
-        return Render(self.HTML_TEMPLATE).run(request)
+        return BaseView(self.HTML_TEMPLATE, title="Главная страница", urls=self.urls).run(request)
+
 
 # Page Controller для формы обратной связи
 # Состав:
@@ -25,8 +37,8 @@ class Index(View):
 # Метод POST записывает данные формы в папку сообщений в файл с именем в формате YYYY-MM-DDTHH-MM-SS_email.
 class Contact(View):
 
-    HTML_TEMPLATE_FORM = settings.PATH_APP + "contact.html"             # Шаблон формы обратной связи
-    HTML_TEMPLATE_SUCCESS = settings.PATH_APP + "contact_success.html"  # Шаблон страницы успеха
+    HTML_TEMPLATE_FORM = settings.PATH_APP + "contact_body.html"             # Шаблон формы обратной связи
+    HTML_TEMPLATE_SUCCESS = settings.PATH_APP + "contact_success_body.html"  # Шаблон страницы успеха
     PATH_CONTACT_MESSAGES = settings.PATH_APP + "contact_messages/"     # Папка для файлов сообщений
     QPARAM_NAME = "name"                                                # Параметры POST с полями сообщения
     QPARAM_EMAIL = "email"
@@ -35,7 +47,7 @@ class Contact(View):
 
     def run(self, request: Request, *args, **kwargs) -> Response:
         if request.method == "GET":             # GET: отобразить форму обратной связи
-            return Render(self.HTML_TEMPLATE_FORM).run(request)
+            return BaseView(self.HTML_TEMPLATE_FORM, *args, **kwargs).run(request)
 
         elif request.method == "POST":          # POST: обработать данные формы обратной связи
                                             # Сформировать строку сообщения
@@ -57,13 +69,13 @@ class Contact(View):
                           request.query_params.get(self.QPARAM_EMAIL), 'w') as output_file:
                     output_file.write(message)
             except FileNotFoundError:
-                return Minimal(status_code=404,
-                               body="Папка сообщений не найдена - возможно, отсутствуют права доступа.").run()
+                return MinimalView(status_code=404,
+                                   body="Папка сообщений не найдена - возможно, отсутствуют права доступа.").run()
 
                                             # Отобразить страницу успеха
-            return Render(self.HTML_TEMPLATE_SUCCESS, message=message_html).run(request)
+            return BaseView(self.HTML_TEMPLATE_SUCCESS, message=message_html, *args, **kwargs).run(request)
 
         else:                                                   # Неизвестный метод - ошибка
-            return Minimal(status_code=418, body="Неизвестный метод HTTP: {}".format(request.method)).run()
+            return MinimalView(status_code=418, body="Неизвестный метод HTTP: {}".format(request.method)).run()
 
 

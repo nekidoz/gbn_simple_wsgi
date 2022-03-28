@@ -1,0 +1,33 @@
+{% extends base_view_template %}
+<!-- param: urls - list of URLs for main menu; uses attributes:
+                    - name - as a menu entry caption,
+                    - url - as a link
+            title - page title
+-->
+{% block baseview_body %}
+    <h1>{{ title }}</h1>
+
+    Халдеев, <br>
+    Налдеев <br>
+    и Питермалдеев <br>
+    Гулять собрались <br>
+    ночью <br>
+    в тихом лесу: <br>
+    Халдеев вприпрыжку, <br>
+    Налдеев с подружкой, <br>
+    а Питермалдеев - с ключом на носу. <br>
+    <br>
+    И вдруг <br>
+    (неожиданно) <br>
+    воздух взбоднулся <br>
+    И вылетел в небо <br>
+    горячий горюч!!! <br>
+    Халдеев подпрыгнул, <br>
+    Налдеев согнулся, <br>
+    А Питермалдеев схватился за ключ. <br>
+
+    <br>
+    {% for url in urls %}
+        <p><a href="{{ url.url }}">{{ url.name }}</a></p>
+    {% endfor %}
+{% endblock %}
