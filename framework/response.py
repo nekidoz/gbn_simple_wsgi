@@ -12,7 +12,7 @@ RESP_DEF_BODY = ""
 # body - response body
 class Response:
 
-    def __init__(self, status_code=RESP_DEF_CODE, body: str = RESP_DEF_BODY):
+    def __init__(self, status_code=RESP_DEF_CODE, body: str = RESP_DEF_BODY, headers=RESP_DEF_HEADERS):
         self.status_code = status_code
-        self.headers = RESP_DEF_HEADERS
+        self.headers = headers
         self.body = body

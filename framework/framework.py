@@ -26,19 +26,12 @@ class Framework:
             for url in admin_urls:
                 if not any(user_url for user_url in self.urls if user_url.url == url.url):
                     self.urls.append(url)
-        #pprint(self.urls)
 
     # PARAMETERS:
     # environ: словарь данных от сервера
     # start_response: функция для ответа серверу
     def __call__(self, environ: dict, start_response, *args, **kwargs):
         self.request = Request(environ)         # Should be done first - protected functions use it
-        #print("Path: {}".format(self.request.path))
-        #print("Path array: {}".format(self.request.path_array))
-        #print("Query parameters ({}): {}".format(self.request.method, self.request.query_params))
-        #print("HTTP headers: ")
-        #pprint(self.request.headers)
-
         view = self._get_view()
         if view:
             response = view.run(self.request)
@@ -74,9 +67,14 @@ class Framework:
         clean_urls = []
         for url in self.urls:
             if url.inMenu or not for_menu_only:
-                clean_urls.append(url)
                 if len(url.url) >= 2 and url.url[-2:] == "/*":
-                    clean_urls[len(clean_urls)-1].url = url.url[:-2]
+                    # create a copy of the original url for a wildcard url - not to modify the original
+                    edited_url = deepcopy(url)
+                    edited_url.url = url.url[:-2]    # modify the copy, removing wildcard
+                    clean_urls.append(edited_url)
+                else:
+                    # just pass the link to the original unmodified url
+                    clean_urls.append(url)
         """    
         # deepcopy variant - when menu items option was not present
         clean_urls = deepcopy(self.urls)

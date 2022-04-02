@@ -1,4 +1,5 @@
 # REFERENCE DESIGN
+from abc import ABC, abstractmethod
 from jinja2 import Template  # Используем шаблонизатор Jinja2
 from dataclasses import dataclass
 from enum import Enum
@@ -18,8 +19,12 @@ TEMPLATE_INDEX = "index.html"  # Главная страница
 TEMPLATE_PARAMETER = "parameter.html"  # Страница индивидуальных параемтров
 
 
-class View:
-    pass
+# View Interface
+class View(ABC):
+
+    @abstractmethod
+    def run(self, request: Request, *args, **kwargs) -> Response:
+        pass
 
 
 # Generated view from a body string using minimal HTML headers and footers
@@ -36,7 +41,7 @@ class MinimalView(View):
         self.body = self.GENERIC_PREFIX + body + self.GENERIC_SUFFIX
         self.status_code = status_code
 
-    def run(self) -> Response:
+    def run(self, request: Request, *args, **kwargs) -> Response:
         return Response(status_code=self.status_code, body=self.body)
 
 
@@ -160,24 +165,16 @@ class BaseViewLayout(Singleton):
         # All templates loaded - return OK
         self.isInit = True                  # 'Already initialized' flag
 
-    # NOTE: load template from template_path/template_file_name or default template
-    # into template dictionary entry; raise exception on file not found condition if requested
-    def set_template(self, section: BaseViewSection,
-                     template_file_name: str = None, template_path: str = None,
-                     clear_html_include: bool = False, raise_filenotfound: bool = False) -> bool:
-        section_data = self._template_settings[section]
-        template_name = ((template_path if template_path else "") + template_file_name) if template_file_name \
-            else section_data.default_template
+    # RETURNS: boolean status and Template object
+    def _load_template(self, template_name: str, raise_filenotfound: bool = False):
         try:
-            # Открываем шаблон по имени
+            # Open template file
             with open(template_name, encoding=settings.HTML_ENCODING) as f:
-                # Читаем
-                self._templates[section_data.template_tag] = Template(f.read())
-                if clear_html_include:          # Clear section's html include field if requested
-                    self._html_includes[section_data.html_include_tag] = ""
+                # Read template file
+                template = Template(f.read())
                 self.status_code = settings.HTTP_CODE_OK
                 self.status_message = "OK"
-                return True
+                return True, template
         except FileNotFoundError:
             # Template not found
             self.status_code = settings.HTTP_CODE_NOTFOUND
@@ -186,35 +183,37 @@ class BaseViewLayout(Singleton):
             if raise_filenotfound:
                 raise FileNotFoundError
             else:
-                return False
+                return False, None
+
+    # NOTE: load template from template_path/template_file_name or default template
+    # into template dictionary entry; raise exception on file not found condition if requested
+    def set_template(self, section: BaseViewSection,
+                     template_file_name: str = None, template_path: str = None,
+                     clear_html_include: bool = False, raise_filenotfound: bool = False) -> bool:
+        section_data = self._template_settings[section]
+        # determine template name - passed on or default
+        template_name = ((template_path if template_path else "") + template_file_name) if template_file_name \
+            else section_data.default_template
+        # load template
+        success, self._templates[section_data.template_tag] = self._load_template(template_name, raise_filenotfound)
+        if success and clear_html_include:                   # Clear section's html include field if requested
+            self._html_includes[section_data.html_include_tag] = ""
+        return success
 
     def render_html_include(self, section: BaseViewSection,
                             template_file_name: str, template_path: str = None,
                             clear_template: bool = False, raise_filenotfound: bool = False, **kwargs) -> bool:
         section_data = self._template_settings[section]
         template_name = (template_path if template_path else "") + template_file_name
-        try:
-            # Открываем шаблон по имени
-            with open(template_name, encoding=settings.HTML_ENCODING) as f:
-                # Читаем
-                template = Template(f.read())
-            # Render the template
+        # load template
+        success, template = self._load_template(template_name, raise_filenotfound)
+        if success:                 # Render the template if loaded
             self._html_includes[section_data.html_include_tag] = template.render(**kwargs)
-            if clear_template:                  # Clear section's template if requested
+            if clear_template:      # Clear section's template if requested
                 self._templates[section_data.template_tag] = None
-            self.status_code = settings.HTTP_CODE_OK
-            self.status_message = "OK"
-            return True
-        except FileNotFoundError:
-            self.status_code = settings.HTTP_CODE_NOTFOUND
-            self.status_message = template_name
-            if not raise_filenotfound:
-                # Template not found
-                self._html_includes[section_data.html_include_tag] = "Страница {} не найдена".format(template_name)
-                return False
-            else:
-                # Throw FileNotFoundError
-                raise FileNotFoundError
+        else:
+            self._html_includes[section_data.html_include_tag] = "Страница {} не найдена".format(template_name)
+        return success
 
     @property
     def templates(self):
@@ -225,7 +224,7 @@ class BaseViewLayout(Singleton):
         return self._html_includes
 
 
-class BaseView:
+class BaseView(View):
 
     def __init__(self,
                  template_name: str, status_code: int=settings.HTTP_CODE_OK,
@@ -277,7 +276,7 @@ class Admin(View):
             except FileNotFoundError:
                 return MinimalView("Параметр '{}' : {}"
                                    .format(request.path_array[2],
-                                       request.environ[request.path_array[len(request.path_array)-1]])).run()
+                                       request.environ[request.path_array[len(request.path_array)-1]])).run(request)
 
         # Корневая страница админки (e.g. /admin)
         elif request.path_array[len(request.path_array)-1] == self.admin_root:
@@ -286,4 +285,4 @@ class Admin(View):
                               params=request.environ, query_params=request.query_params).run(request)
 
         else:
-            return MinimalView("Это неизвестная страница админки: {}".format(request.path)).run()
+            return MinimalView("Это неизвестная страница админки: {}".format(request.path)).run(request)

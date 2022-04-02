@@ -1,20 +1,30 @@
-<!DOCTYPE html>
-<!-- param: urls - list of URLs for main menu; uses attributes:
-                    - name - as a menu entry caption,
-                    - url - as a link
+{% extends base_view_template %}
+<!-- param: categories - list of course categories; uses attributes:
+                - name - as a menu entry caption,
             title - page title
 -->
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-</head>
-<body>
-
+{% block baseview_body %}
     <h1>{{ title }}</h1>
 
-    {% for url in urls %}
-        <p><a href="{{ url.url }}">{{ url.name }}</a></p>
-    {% endfor %}
-</body>
-</html>
+    <table>
+        <tr>
+            <td style="vertical-align:top">
+                <h2>Список категорий курсов</h2>
+                {% for category in categories %}
+                    <p><a href="category/edit/{{ category.id }}"> {{ category.name|e }} </a></p>
+                {% endfor %}
+                <br>
+                <p><a href="category/edit/new_category"><center><b> Создать новую категорию </b></center></a></p>
+            </td>
+            <td style="vertical-align:top;padding-left:20px">
+                <h2>Список курсов</h2>
+                {% for course in courses %}
+                    <p><a href="course/edit/{{ course.id }}"> {{ course.name|e }} </a></p>
+                {% endfor %}
+                <br>
+                <p><a href="course/edit/new_course"><center><b> Создать новый курс </b></center></a></p>
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

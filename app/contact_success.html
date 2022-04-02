@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends base_view_template %}
+{% block baseview_body %}
     <p><a href="/">Домой</a></p>
 
     <h1>Страница обратной связи</h1>
@@ -12,5 +7,4 @@
     <p>Ваше сообщение успешно отправлено:</p>
     <p></p>
     <p>{{ message }}</p>
-</body>
-</html>
+{% endblock %}

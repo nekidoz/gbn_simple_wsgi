@@ -1,11 +1,6 @@
-<!DOCTYPE html>
+{% extends base_view_template %}
 <!-- Параметр processing_url - URL, куда отправлять содержимое формы методом POST -->
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% block baseview_body %}
     <p><a href="/">Домой</a></p>
 
     <h1>Страница обратной связи</h1>
@@ -35,6 +30,4 @@
             <tr><td colspan="2" style="text-align:center"><button>Отправить</button></td></tr>
         </table>
     </form>
-
-</body>
-</html>
+{% endblock %}
