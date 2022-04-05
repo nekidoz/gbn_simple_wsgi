@@ -56,9 +56,9 @@ View class using this functionality could look like this:
 - Made all application pages use BaseView class with 5-section base template. 
 - Added navigation menu to the left sidebar of the base view.
 
-###31.03.2022 - Lesson 4 homework
+###02.04.2022 - Lesson 4 homework
 
-1. FRAMEWORK: Added Persistence (database) functionality in /framework.persistence.py.
+1. FRAMEWORK: Added Persistence (database) functionality in /framework/persistence.py.
 The library implements get/set/delete functionality for custom classes.
 Custom class should contain an 'id' field identifying each class instance. 
 In case id is duplicated, more than one instance can be returned by the the library's data manipulating methods. 
@@ -129,3 +129,110 @@ implementing basic functionality to create/edit a data instance:
 - All the data for courses and categories is managed using Persistence library with JSON storage engine.
 - Updated the main application page (Index() view) to show available categories and courses.
  
+##05.04.2022 - Lesson 5 homework
+
+1. FRAMEWORK: Added Logger functionality in /framework/logger.py.
+The library implements logging functionality which is a subset of Python logger, i.e.:
+- LoggerHandlers that implement formatting and saving log messages to specific media - files, console.
+File and Console handlers are currently implemented. 
+- Loggers the implement dispatching log messages to their assigned LoggerHandlers.
+- Log objects that store default configuration for logging - Logger reference, logging level, message source - 
+to minimize the coding effort.  
+- Individual loggers and handlers can be turned on and off, 
+can assign default logging level to messages with no logging level specified, 
+and can be filtering messages by logging level.
+- The following classes and objects are defined:
+
+    - LoggerLevel - Logger levels enumeration class
+    - LOGGER_DEFAULT_LEVEL - Default logger level for the logging system
+    - LoggerHandler - Abstract class implementing logger handler skeleton. 
+    Logger handler has similar function to that of the Python standard library:
+    it implements formatting and writing log message to specific media and is called by Logger to do the job.
+    This abstract class implements:
+        - init() - turning handler on and off,
+        setup of the minimum logging level for handler and default logging level for messages,
+        - compose_message() - composing log message string,
+        - validate_message() - deciding whether to write a log entry depending on the state of handler 
+        and message level.
+    - LoggerConsoleHandler - Concrete class of console logger handler. Implements actual writing to the console.
+    - LoggerFileHandler - Concrete class of file logger handler. Implements actual writing to a file.
+    - Logger - The Logger class dispatches log requests to the logger handlers configured for this logger instance.
+    The following functions are implemented:
+        - __init__() - initializes the logger by storing its handlers and default properties
+        - log() - check if should log the message by checking whether the logger is on and
+        message logging level is not below the minimum logger logging level,
+        then call all the handlers to actually log the message
+    - Log - This class should be actually called by any app to reference a logger and then log a message.
+    The following functions are implemented:
+        - __init__() - sets the actual logger, default logging level and message source reference
+        for subsequent calls to the Log instance object
+        - __call__() - logs the message (calls a logger instance) filling in omitted parameters
+    - LoggerFabric - Use this class to initialize the logging subsystem:
+    turn in on and off, set handlers and loggers and the default message level
+
+A typical file to configure the logging subsystem can look like the following.
+It configures three log handlers - console, debug file and runtime file - 
+and two loggers - debug and runtime - both logging to a file and the console. 
+
+    handlers = {
+        'console': {
+            'handler': 'LoggerConsoleHandler',
+            'level': 0,
+            'default_level': 0,
+            'is_on': True,
+        },
+        'debug_file': {
+            'handler': 'LoggerFileHandler',
+            'file_name': 'debug.log',
+            'level': 0,
+            'default_level': 0,
+            'is_on': True,
+        },
+        'app_file': {
+            'handler': 'LoggerFileHandler',
+            'file_name': 'app.log',
+            'level': 0,
+            'default_level': 0,
+            'is_on': True,
+        },
+    }
+    
+    loggers = {
+        'debug': {
+            'logger': 'Logger',
+            'handlers': ['console', 'debug_file'],
+            'level': 0,
+            'default_level': 0,
+            'is_on': True,
+        },
+        'runtime': {
+            'logger': 'Logger',
+            'handlers': ['console', 'app_file'],
+            'level': 0,
+            'default_level': 0,
+            'is_on': True,
+        },
+    }
+
+The typical usage of the subsystem can look like the following:
+
+    # Initialize the logging subsystem
+    logger = LoggerFabric(handlers=handlers, loggers=loggers)
+    
+    # Initialize two loggers 
+    log_d = Log(settings.LOGGER_DEBUG, LoggerLevel.DEBUG, 'app')
+    log_r = Log(settings.LOGGER_RUNTIME, LoggerLevel.INFO, 'app')
+    
+    Log the messages
+    log_d("Test debug message")
+    log_r("Test runtime message")
+
+The output of the commands above can look like this:
+
+    2022-04-04T23:49:35.893175, 0, app, Test debug message
+    2022-04-04T23:49:35.893541, 1, app, Test runtime message
+
+There first message will also be output to the debug.log file,
+and the second - to the app.log file.
+
+2. APP: Added file logs.py with the default logger configuration and logger init commands to app.py.

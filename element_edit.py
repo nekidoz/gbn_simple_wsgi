@@ -2,7 +2,8 @@ from framework.views import View
 from framework.request import Request
 from framework.response import Response
 from framework.persistence import Persistence
-from framework.views import MinimalView, BaseView
+from framework.views import BaseView
+from framework.logger import logging
 
 
 # PARAMS:
