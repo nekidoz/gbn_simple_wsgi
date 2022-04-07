@@ -1,4 +1,4 @@
-from functools import wraps, total_ordering
+from functools import wraps, total_ordering, partial
 from enum import Enum
 from abc import ABC, abstractmethod
 from datetime import datetime
@@ -22,6 +22,9 @@ class LoggerLevel(Enum):
             return self.value < other.value
         return NotImplemented
 
+    def __str__(self):
+        return {0:'DEBUG', 1:'INFO', 2:'WARNING', 3:'ERROR', 4:'CRITICAL'}.get(self.value, f'Unknown({self.value})')
+
 
 # Default logger level for the logging system
 LOGGER_DEFAULT_LEVEL = LoggerLevel.DEBUG
@@ -41,33 +44,38 @@ LOGGER_DEFAULT_LEVEL = LoggerLevel.DEBUG
 # isOn - flag showing whether the handler is on (logging messages)
 class LoggerHandler(ABC):
 
-    @abstractmethod
-    def __init__(self, level: LoggerLevel, default_level: LoggerLevel, is_on: bool = True):
+    def __init__(self, name: str, level: LoggerLevel = None, default_level: LoggerLevel = None, is_on: bool = True):
+        self.name = name
         self.level = level if level else LoggerFabric().defaultLevel
         self.defaultLevel = default_level if default_level else LoggerFabric().defaultLevel
         self.isOn = is_on
 
     @staticmethod
-    def compose_message(message: str, level: LoggerLevel, source: str = "") -> str:
-        return "{}, {}, {}, {}".format(datetime.now().isoformat(timespec='microseconds'), level.value, source, message)
+    def compose_message(message: str, level: LoggerLevel, logger_name: str = None, source: str = None) -> str:
+        return "{}, {}, {}, {}, {}".format(datetime.now().isoformat(timespec='microseconds'),
+                                           level,
+                                           logger_name if logger_name else "",
+                                           source if source else "",
+                                           message)
 
-    def validate_message(self, message: str, level: LoggerLevel = None, source: str = None):
+    def validate_message(self, message: str, level: LoggerLevel = None, logger_name: str = None, source: str = None):
         message_level = level if level else self.defaultLevel
         if self.isOn and message_level >= self.level:
-            return self.compose_message(message=message, level=message_level, source=source)
+            return self.compose_message(message=message, level=message_level, logger_name=logger_name, source=source)
         else:
             return None
+
+    # should be defined to implement the actual logging functionality
+    @abstractmethod
+    def log(self, message: str, level: LoggerLevel = None, logger_name: str = None, source: str = None):
+        pass
 
 
 # Concrete class of console logger handler. Implements actual writing to the console.
 class LoggerConsoleHandler(LoggerHandler):
 
-    def __init__(self, level: LoggerLevel = None, default_level: LoggerLevel = None,
-                 is_on: bool = True):
-        super().__init__(level, default_level, is_on)
-
-    def log(self, message: str, level: LoggerLevel = None, source: str = None) -> bool:
-        rendered_message = self.validate_message(message, level, source)
+    def log(self, message: str, level: LoggerLevel = None, logger_name: str = None, source: str = None) -> bool:
+        rendered_message = self.validate_message(message=message, level=level, logger_name=logger_name, source=source)
         if rendered_message:
             print(rendered_message)
             return True
@@ -80,13 +88,13 @@ class LoggerConsoleHandler(LoggerHandler):
 # fileName - full path and file name of the log file to log messages to
 class LoggerFileHandler(LoggerHandler):
 
-    def __init__(self, file_name: str, level: LoggerLevel = None, default_level: LoggerLevel = None,
+    def __init__(self, name: str, file_name: str, level: LoggerLevel = None, default_level: LoggerLevel = None,
                  is_on: bool = True):
         self.fileName = file_name
-        super().__init__(level, default_level, is_on)
+        super().__init__(name=name, level=level, default_level=default_level, is_on=is_on)
 
-    def log(self, message: str, level: LoggerLevel = None, source: str = None) -> bool:
-        rendered_message = self.validate_message(message, level, source)
+    def log(self, message: str, level: LoggerLevel = None, logger_name: str = None, source: str = None) -> bool:
+        rendered_message = self.validate_message(message=message, level=level, logger_name=logger_name, source=source)
         if rendered_message:
             try:
                 with open(self.fileName, 'a', encoding=settings.HTML_ENCODING) as f:
@@ -113,12 +121,14 @@ class LoggerFileHandler(LoggerHandler):
 # isOn - flag showing whether the logger is on (logging messages)
 class Logger:
 
-    def __init__(self, handlers: [], level: LoggerLevel, default_level: LoggerLevel, is_on: bool = True):
+    def __init__(self, name: str, handlers: [],
+                 level: LoggerLevel = None, default_level: LoggerLevel = None, is_on: bool = True):
         # init handlers
         self.handlers = []
         for handler in handlers:
             self.handlers.append(LoggerFabric().handlers[handler])
         # init other parameters
+        self.name = name
         self.level = level if level else LoggerFabric().defaultLevel
         self.defaultLevel = default_level if default_level else LoggerFabric().defaultLevel
         self.isOn = is_on
@@ -127,10 +137,11 @@ class Logger:
         message_level = level if level else self.defaultLevel
         if self.isOn and message_level >= self.level:
             for handler in self.handlers:
-                handler.log(message=message, level=level, source=source)
+                handler.log(message=message, level=level, logger_name=self.name, source=source)
             return True
         else:
             return False
+
 
 # This class should be actually called by any app to reference a logger and then log a message
 # __init__() - sets the actual logger, default logging level and message source reference
@@ -142,12 +153,16 @@ class Logger:
 # default_source - default message source for any message with no source specified
 class Log:
 
-    def __init__(self, logger, default_level: LoggerLevel = None, default_source: str = None):
-        self.logger = LoggerFabric().loggers[logger]
+    def __init__(self, logger=None, default_level: LoggerLevel = None, default_source: str = None):
+        self.logger = LoggerFabric().loggers.get(logger if logger else LoggerFabric().defaultLogger, None)
+        if not self.logger:                 # exit if logger subsystem not yet init
+            return
         self.default_level = default_level if default_level else self.logger.defaultLevel
         self.default_source = default_source if default_source else ""
 
     def __call__(self, message: str, level: LoggerLevel = None, source: str = None) -> bool:
+        if not self.logger:                 # exit if logger subsystem not yet init
+            return
         return self.logger.log(message=message,
                                level=level if level else self.default_level,
                                source=source if source else self.default_source)
@@ -159,14 +174,17 @@ class Log:
 # isOn - logging is on flag
 # loggers - dictionary of loggers - id and the respective Logger
 # handlers - dictionary of handlers - id and the respective LoggerHandler
+# defaultLogger - default logger if none specified
 # defaultLevel - default logging level if not specified in individual messages
+# (default is the first logger in the loggers dict)
 class LoggerFabric(Singleton):
 
     # Pass a dictionary of logger files if you want to use multiple.
     # Every time __init__() is called, the logger list is updated
     def __init__(self, turn_on: bool = True,
                  handlers: dict = None, loggers: dict = None,
-                 default_level: LoggerLevel = None):
+                 default_logger=None,  default_level: LoggerLevel = None):
+
         if not hasattr(self, 'isOn'):
             self.isOn = turn_on
 
@@ -192,14 +210,31 @@ class LoggerFabric(Singleton):
             for logger, parameters in loggers.items():
                 self.loggers[logger] = globals()[parameters['logger']](**dict(list(parameters.items())[1:]))
 
+        # Init default logger
+        if default_logger:
+            self.defaultLogger = default_logger
+        elif not hasattr(self, 'defaultLogger'):
+            if self.loggers != {}:
+                self.defaultLogger = next(iter(self.loggers))
+            else:
+                self.defaultLogger = None
+
 
 # Decorator to enable logging for a function
-def logging(header: str = None, logger=None, level: LoggerLevel = LoggerLevel.DEBUG):
-    def enable_logger(func):
-        @wraps(func)
-        def logged_function(*args, **kwargs):
-            if LoggerFabric().isOn:
-                print("FUNCTION: {}, logger: {}, level: {}".format(header, logger, level))
-            return func(*args, **kwargs)
-        return logged_function
-    return enable_logger
+# May be called in two ways:
+# @debug - without parameters
+# @debug(logger=logger, level=level) - specifying any or both of the keyword parameters: logger and level
+# IDEA: https://pythonguide.readthedocs.io/en/latest/python/decorator.html
+def debug(func=None, *, logger=None, level: LoggerLevel = LoggerLevel.DEBUG):
+    if func is None:            # Function called with parameters - no function passed at the first argument position
+        return partial(debug, logger=logger, level=level)      # prepend the function parameter
+
+    @wraps(func)                # Pass this function's metadata into the nested function
+    def logged_function(*args, **kwargs):
+        log = Log(logger=logger if logger else LoggerFabric().defaultLogger,
+                  default_level=level, default_source=func.__name__)
+        log("Execution started")
+        func_result = func(*args, **kwargs)
+        log("Execution finished")
+        return func_result
+    return logged_function

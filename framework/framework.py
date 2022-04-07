@@ -1,10 +1,14 @@
 # This is the main framework class
+from pprint import pprint
+from copy import deepcopy
+from functools import wraps
+
 from framework.request import Request
 from framework import settings
 from framework.views import View404
-from framework.urls import admin_urls
-from pprint import pprint
-from copy import deepcopy
+from framework.urls import admin_urls, Url
+from framework.singleton import Singleton
+from framework.logger import debug, Log
 
 
 # ATTRIBUTES:
@@ -17,15 +21,17 @@ from copy import deepcopy
 # get_clean_urls - clean user app urls for navigation (without wildcards)
 #
 # router processes full URL paths and wildcard (e.g. /someurl/*) URLs (see urls.py for example)
-class Framework:
+class Framework(Singleton):
 
-    def __init__(self, urls, use_admin: bool = False):
-        self.urls = urls
-        # Add admin URLs if requested and if paths not occupied
-        if use_admin:
+    def __init__(self, urls: [Url] = None, use_admin: bool = False):
+        if not hasattr(self, 'urls'):           # Initialize attribute if it doesn't exist
+            self.urls = []
+        if urls:                                # Refresh urls if any passed
+            for url in urls:
+                self.set_url(url, replace=True)
+        if use_admin:                           # Add admin URLs if requested and if paths not occupied
             for url in admin_urls:
-                if not any(user_url for user_url in self.urls if user_url.url == url.url):
-                    self.urls.append(url)
+                self.set_url(url, replace=False)
 
     # PARAMETERS:
     # environ: словарь данных от сервера
@@ -47,20 +53,32 @@ class Framework:
 
     # Process full URL paths and wildcard (e.g. /someurl/*) URL processing
     def _get_view(self):
+        target_url = None
         for url in self.urls:
 
             # wildcard URL processing
             if len(url.url) >= 2 and url.url[-2:] == "/*":
                 # Check for cases like /someurl and /someurl/someotherurl
-                if len(self.request.path) == len(url.url) - 2 or \
-                        (len(self.request.path) > len(url.url) - 2 and \
+                if (len(self.request.path) == len(url.url) - 2) or \
+                        (len(self.request.path) > len(url.url) - 2 and
                          self.request.path[:(len(url.url)-1)] == url.url[:-1]):
-                    return url.view
+                    target_url = url
 
             # full URL processing
             else:
                 if url.url == self.request.path:
-                    return url.view
+                    target_url = url
+
+            # URL found - init the view class instance and return it to the caller
+            if target_url:
+                return target_url.viewClass(**target_url.viewParams)
+
+    # Associate a url with a view, replacing existing assignments for the same url if replace if True
+    def set_url(self, url: Url, replace: bool = False):
+        if not any(existing_url for existing_url in self.urls if existing_url.url == url.url):
+            self.urls.append(url)           # if no entry for this url, append
+        elif replace:                       # if entry exists, replace if requested
+            self.urls = [url if existing_url.url == url.url else existing_url for existing_url in self.urls]
 
     # return urls list with wildcards removed from urls, optionally - only of menu items
     def get_clean_urls(self, for_menu_only: bool = False):
@@ -83,3 +101,18 @@ class Framework:
                 url.url = url.url[:-2]
         """
         return clean_urls
+
+
+# Decorator to enable logging for a function
+# May be called in two ways:
+# @debug - without parameters
+# @debug(logger=logger, level=level) - specifying any or both of the keyword parameters: logger and level
+# IDEA:
+def url(url: str, name: str = "", in_menu: bool = False, **kwargs):
+    def add_url(func):
+        Framework().set_url(Url(url, func, {**kwargs}, name, in_menu), replace=True)
+        @wraps(func)                # Pass this function's metadata into the nested function
+        def view_function(*args, **kwargs):
+            return func(*args, **kwargs)
+        return view_function
+    return add_url

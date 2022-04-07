@@ -18,7 +18,7 @@ import settings
 # Прочие константы
 EMAIL_ADMIN = "nekidoz@yandex.ru"
 
-logger = LoggerFabric(handlers=handlers, loggers=loggers)
+logger = LoggerFabric(handlers=handlers, loggers=loggers, default_logger=settings.LOGGER_DEBUG)
 log_d = Log(settings.LOGGER_DEBUG, LoggerLevel.DEBUG, 'app')
 log_r = Log(settings.LOGGER_RUNTIME, LoggerLevel.INFO, 'app')
 log_d("Test debug message")

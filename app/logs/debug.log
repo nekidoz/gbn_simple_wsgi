@@ -2,3 +2,141 @@
 2022-04-04T23:48:00.008852, 0, app, Test debug message
 2022-04-04T23:49:35.893317, 0, app, Test debug message
 2022-04-05T20:51:28.554556, 0, app, Test debug message
+2022-04-06T15:40:55.266815, 0, app, Test debug message
+2022-04-06T16:31:58.360788, 0, app, Test debug message
+2022-04-06T17:49:15.632980, 0, app, Test debug message
+2022-04-06T17:49:21.171357, 0, Index, Execution started
+2022-04-06T17:49:21.171730, 0, Index, Execution finished
+2022-04-06T17:53:29.817379, 0, app, Test debug message
+2022-04-06T17:53:33.737257, 0, Index, Execution started
+2022-04-06T17:53:33.737610, 0, Index, Execution finished
+2022-04-06T17:53:39.260428, 0, Index, Execution started
+2022-04-06T17:53:39.260772, 0, Index, Execution finished
+2022-04-06T17:53:45.239870, 0, Index, Execution started
+2022-04-06T17:53:45.240221, 0, Index, Execution finished
+2022-04-06T18:55:35.613965, LoggerLevel.DEBUG, app, Test debug message
+2022-04-06T19:27:13.089103, Unknown(0), app, Test debug message
+2022-04-06T19:27:56.246649, DEBUG, app, Test debug message
+2022-04-06T20:25:23.684292, DEBUG, debug, app, Test debug message
+2022-04-06T20:25:43.846633, DEBUG, debug, Index, Execution started
+2022-04-06T20:25:43.846985, DEBUG, debug, Index, Execution finished
+2022-04-06T20:26:02.306931, DEBUG, debug, Index, Execution started
+2022-04-06T20:26:02.307296, DEBUG, debug, Index, Execution finished
+2022-04-06T20:26:07.813997, DEBUG, debug, Index, Execution started
+2022-04-06T20:26:07.814355, DEBUG, debug, Index, Execution finished
+2022-04-06T20:30:48.937497, DEBUG, debug, app, Test debug message
+2022-04-06T20:31:09.232326, DEBUG, debug, Index, Execution started
+2022-04-06T20:31:09.232743, DEBUG, debug, Index, Execution finished
+2022-04-06T20:43:57.969708, DEBUG, debug, app, Test debug message
+2022-04-06T23:04:34.331157, DEBUG, debug, Index, Execution started
+2022-04-06T23:04:34.331531, DEBUG, debug, Index, Execution finished
+2022-04-07T00:29:32.015884, DEBUG, debug, app, Test debug message
+2022-04-07T00:29:38.845018, DEBUG, debug, Index, Execution started
+2022-04-07T00:29:38.845376, DEBUG, debug, Index, Execution finished
+2022-04-07T00:29:38.845774, DEBUG, debug, run, Execution started
+2022-04-07T00:29:38.848809, DEBUG, debug, run, Execution finished
+2022-04-07T00:30:46.264757, DEBUG, debug, Index, Execution started
+2022-04-07T00:30:46.265105, DEBUG, debug, Index, Execution finished
+2022-04-07T00:30:46.265526, DEBUG, debug, run, Execution started
+2022-04-07T00:30:46.268411, DEBUG, debug, run, Execution finished
+2022-04-07T00:31:59.255089, DEBUG, debug, app, Test debug message
+2022-04-07T00:32:03.130696, DEBUG, debug, Index, Execution started
+2022-04-07T00:32:03.131083, DEBUG, debug, Index, Execution finished
+2022-04-07T00:32:03.131413, DEBUG, debug, run, Execution started
+2022-04-07T00:32:03.134485, DEBUG, debug, run, Execution finished
+2022-04-07T00:33:53.408966, DEBUG, debug, Index, Execution started
+2022-04-07T00:33:53.409317, DEBUG, debug, Index, Execution finished
+2022-04-07T00:33:53.409654, DEBUG, debug, run, Execution started
+2022-04-07T00:33:53.412659, DEBUG, debug, run, Execution finished
+2022-04-07T14:22:58.348171, DEBUG, debug, app, Test debug message
+2022-04-07T14:26:40.631588, DEBUG, debug, app, Test debug message
+2022-04-07T14:29:07.411470, DEBUG, debug, app, Test debug message
+2022-04-07T15:19:28.391277, DEBUG, debug, app, Test debug message
+2022-04-07T15:23:20.911890, DEBUG, debug, Index, Execution started
+2022-04-07T15:23:20.912289, DEBUG, debug, Index, Execution finished
+2022-04-07T15:23:20.912646, DEBUG, debug, run, Execution started
+2022-04-07T15:23:20.915701, DEBUG, debug, run, Execution finished
+2022-04-07T15:23:33.696065, DEBUG, debug, Index, Execution started
+2022-04-07T15:23:33.696430, DEBUG, debug, Index, Execution finished
+2022-04-07T15:23:33.696750, DEBUG, debug, run, Execution started
+2022-04-07T15:23:33.699653, DEBUG, debug, run, Execution finished
+2022-04-07T15:25:51.816569, DEBUG, debug, app, Test debug message
+2022-04-07T15:33:50.743296, DEBUG, debug, app, Test debug message
+2022-04-07T15:33:50.743997, DEBUG, debug, __init__, Execution started
+2022-04-07T15:33:50.744339, DEBUG, debug, __init__, Execution finished
+2022-04-07T15:34:25.472107, DEBUG, debug, app, Test debug message
+2022-04-07T15:34:25.472762, DEBUG, debug, Framework, Execution started
+2022-04-07T15:34:25.473077, DEBUG, debug, __init__, Execution started
+2022-04-07T15:34:25.473346, DEBUG, debug, __init__, Execution finished
+2022-04-07T15:34:25.473612, DEBUG, debug, Framework, Execution finished
+2022-04-07T15:36:29.483799, DEBUG, debug, app, Test debug message
+2022-04-07T15:36:29.484459, DEBUG, debug, Framework, Execution started
+2022-04-07T15:36:29.484737, DEBUG, debug, __init__, Execution started
+2022-04-07T15:36:29.485003, DEBUG, debug, __init__, Execution finished
+2022-04-07T15:36:29.485269, DEBUG, debug, Framework, Execution finished
+2022-04-07T15:38:05.881228, DEBUG, debug, app, Test debug message
+2022-04-07T15:38:05.881943, DEBUG, debug, Framework, Execution started
+2022-04-07T15:38:05.882249, DEBUG, debug, __init__, Execution started
+2022-04-07T15:38:05.882545, DEBUG, debug, __init__, Execution finished
+2022-04-07T15:38:05.882840, DEBUG, debug, Framework, Execution finished
+2022-04-07T15:39:42.734036, DEBUG, debug, app, Test debug message
+2022-04-07T15:39:42.734674, DEBUG, debug, Framework, Execution started
+2022-04-07T15:39:42.734952, DEBUG, debug, __init__, Execution started
+2022-04-07T15:39:42.735249, DEBUG, debug, , urls: [Url(url='/', viewClass=<function Index at 0x7febf0cde290>, viewParams={}, name='Главная страница', inMenu=True), Url(url='/category/edit/*', viewClass=<class 'element_edit.ElementEditView'>, viewParams={'element_class': <class 'category.Category'>, 'element_html_class_name': 'Category', 'html_template_form': 'app/element_edit.html'}, name='Категории курсов', inMenu=False), Url(url='/course/edit/*', viewClass=<class 'course.CourseEditView'>, viewParams={'element_class': <class 'course.Course'>, 'element_html_class_name': 'Course', 'html_template_form': 'app/element_edit.html'}, name='Курсы', inMenu=False), Url(url='/contact', viewClass=<function Contact at 0x7febf0ce80e0>, viewParams={}, name='Обратная связь', inMenu=True)]
+2022-04-07T15:39:42.735525, DEBUG, debug, __init__, Execution finished
+2022-04-07T15:39:42.735788, DEBUG, debug, Framework, Execution finished
+2022-04-07T15:40:21.117510, DEBUG, debug, app, Test debug message
+2022-04-07T15:40:21.118203, DEBUG, debug, Framework, Execution started
+2022-04-07T15:40:21.118507, DEBUG, debug, __init__, Execution started
+2022-04-07T15:40:21.118820, DEBUG, debug, , urls: [Url(url='/', viewClass=<function Index at 0x7fe168cdb200>, viewParams={}, name='Главная страница', inMenu=True), Url(url='/category/edit/*', viewClass=<class 'element_edit.ElementEditView'>, viewParams={'element_class': <class 'category.Category'>, 'element_html_class_name': 'Category', 'html_template_form': 'app/element_edit.html'}, name='Категории курсов', inMenu=False), Url(url='/course/edit/*', viewClass=<class 'course.CourseEditView'>, viewParams={'element_class': <class 'course.Course'>, 'element_html_class_name': 'Course', 'html_template_form': 'app/element_edit.html'}, name='Курсы', inMenu=False), Url(url='/contact', viewClass=<function Contact at 0x7fe168cfca70>, viewParams={}, name='Обратная связь', inMenu=True)]
+2022-04-07T15:40:21.119107, DEBUG, debug, __init__, Execution finished
+2022-04-07T15:40:21.119383, DEBUG, debug, Framework, Execution finished
+2022-04-07T15:46:32.435715, DEBUG, debug, app, Test debug message
+2022-04-07T15:46:32.436372, DEBUG, debug, Framework, Execution started
+2022-04-07T15:46:32.436652, DEBUG, debug, __init__, Execution started
+2022-04-07T15:46:32.436923, DEBUG, debug, __init__, Execution finished
+2022-04-07T15:46:32.437187, DEBUG, debug, Framework, Execution finished
+2022-04-07T15:46:36.783724, DEBUG, debug, Index, Execution started
+2022-04-07T15:46:36.784087, DEBUG, debug, Index, Execution finished
+2022-04-07T15:46:36.784410, DEBUG, debug, run, Execution started
+2022-04-07T15:46:36.787546, DEBUG, debug, run, Execution finished
+2022-04-07T16:03:16.936410, DEBUG, debug, app, Test debug message
+2022-04-07T16:04:33.494690, DEBUG, debug, app, Test debug message
+2022-04-07T16:07:38.443383, DEBUG, debug, app, Test debug message
+2022-04-07T16:07:43.951526, DEBUG, debug, Index, Execution started
+2022-04-07T16:07:43.951850, DEBUG, debug, Index, Execution finished
+2022-04-07T16:07:43.952140, DEBUG, debug, run, Execution started
+2022-04-07T16:07:43.955150, DEBUG, debug, run, Execution finished
+2022-04-07T16:07:54.395888, DEBUG, debug, Index, Execution started
+2022-04-07T16:07:54.396232, DEBUG, debug, Index, Execution finished
+2022-04-07T16:07:54.396566, DEBUG, debug, run, Execution started
+2022-04-07T16:07:54.399624, DEBUG, debug, run, Execution finished
+2022-04-07T16:08:12.394584, DEBUG, debug, app, Test debug message
+2022-04-07T16:08:15.447681, DEBUG, debug, Index, Execution started
+2022-04-07T16:08:15.448046, DEBUG, debug, Index, Execution finished
+2022-04-07T16:08:15.448517, DEBUG, debug, run, Execution started
+2022-04-07T16:08:15.451688, DEBUG, debug, run, Execution finished
+2022-04-07T16:08:47.659339, DEBUG, debug, app, Test debug message
+2022-04-07T16:08:51.152841, DEBUG, debug, Index, Execution started
+2022-04-07T16:08:51.153204, DEBUG, debug, Index, Execution finished
+2022-04-07T16:08:51.153666, DEBUG, debug, run, Execution started
+2022-04-07T16:08:51.156698, DEBUG, debug, run, Execution finished
+2022-04-07T16:09:26.279271, DEBUG, debug, app, Test debug message
+2022-04-07T16:10:52.852329, DEBUG, debug, app, Test debug message
+2022-04-07T16:10:59.633986, DEBUG, debug, Index, Execution started
+2022-04-07T16:10:59.634381, DEBUG, debug, Index, Execution finished
+2022-04-07T16:10:59.634721, DEBUG, debug, run, Execution started
+2022-04-07T16:10:59.638046, DEBUG, debug, run, Execution finished
+2022-04-07T18:52:30.544716, DEBUG, debug, app, Test debug message
+2022-04-07T18:52:49.944272, DEBUG, debug, Index, Execution started
+2022-04-07T18:52:49.944660, DEBUG, debug, Index, Execution finished
+2022-04-07T18:52:49.945007, DEBUG, debug, run, Execution started
+2022-04-07T18:52:49.948181, DEBUG, debug, run, Execution finished
+2022-04-07T18:54:34.230240, DEBUG, debug, Index, Execution started
+2022-04-07T18:54:34.230584, DEBUG, debug, Index, Execution finished
+2022-04-07T18:54:34.230988, DEBUG, debug, run, Execution started
+2022-04-07T18:54:34.234001, DEBUG, debug, run, Execution finished
+2022-04-07T18:54:49.020185, DEBUG, debug, Index, Execution started
+2022-04-07T18:54:49.020566, DEBUG, debug, Index, Execution finished
+2022-04-07T18:54:49.020902, DEBUG, debug, run, Execution started
+2022-04-07T18:54:49.023879, DEBUG, debug, run, Execution finished

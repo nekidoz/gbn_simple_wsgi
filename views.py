@@ -7,6 +7,8 @@ from framework.request import Request
 from framework.views import View, BaseView, MinimalView
 from framework.singleton import Singleton
 from framework.persistence import Persistence
+from framework.logger import debug, LoggerLevel
+from framework.framework import url
 
 import settings
 from category import Category
@@ -14,9 +16,11 @@ from course import Course
 
 
 # Main page controller  - SINGLETON! Initialize it with menu urls when Framework is initialized!
+@debug
 class Index(View, Singleton):
     HTML_TEMPLATE = settings.PATH_APP + "index.html"             # Page template
 
+    @debug
     def run(self, request: Request, *args, **kwargs) -> Response:
         return BaseView(self.HTML_TEMPLATE,
                         title="Главная страница",
@@ -33,6 +37,8 @@ class Index(View, Singleton):
 #   или права на создание такой папки в папке page controller'ов
 # Метод GET отображает форму.
 # Метод POST записывает данные формы в папку сообщений в файл с именем в формате YYYY-MM-DDTHH-MM-SS_email.
+@debug(logger='runtime', level=LoggerLevel.INFO)
+@url('/kakaka', name="Обратная связь через декоратор", in_menu=True)
 class Contact(View):
 
     HTML_TEMPLATE_FORM = settings.PATH_APP + "contact.html"             # Шаблон формы обратной связи
@@ -43,6 +49,7 @@ class Contact(View):
     QPARAM_TITLE = "title"
     QPARAM_MESSAGE = "msg"
 
+    @debug(logger='runtime', level=LoggerLevel.INFO)
     def run(self, request: Request, *args, **kwargs) -> Response:
         if request.method == "GET":             # GET: отобразить форму обратной связи
             return BaseView(self.HTML_TEMPLATE_FORM, *args, **kwargs).run(request)

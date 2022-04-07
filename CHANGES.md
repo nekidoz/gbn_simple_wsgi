@@ -236,3 +236,119 @@ There first message will also be output to the debug.log file,
 and the second - to the app.log file.
 
 2. APP: Added file logs.py with the default logger configuration and logger init commands to app.py.
+
+##07.04.2022 - Lesson 6 homework
+
+1. FRAMEWORK: Added @debug function (method) decorator to the Logger library /framework/logger.py 
+(Lesson 5 official homework). 
+It can also be applied to a class definition.
+It prints two log messages with the function name: before and after running the function code. 
+It can be used with or without parameters:
+
+        # Log to the default logger (see LoggerFactory class initializer parameters below) and default level
+        @debug
+        class Index:
+
+        # Log to the specified logger and/or with the specified level (both parameters being optional)
+        @debug(logger='runtime', level=LoggerLevel.INFO)
+        class Contact:
+
+- Output of the decorator could look like the following. 
+Logger name field has been added after the debug level field.
+
+        2022-04-06T23:04:34.331026, DEBUG, debug, Index, Execution started
+        2022-04-06T23:04:34.331419, DEBUG, debug, Index, Execution finished
+        2022-04-06T23:04:47.546540, INFO, runtime, Contact, Execution started
+        2022-04-06T23:04:47.546912, INFO, runtime, Contact, Execution finished
+
+- Added default_logger parameter to the LoggerFactory class initializer, 
+e.g. for use with the @debug decorator (see above):
+
+        logger = LoggerFabric(handlers=handlers, loggers=loggers, default_logger=settings.LOGGER_DEBUG)
+
+To show the functionality, added @debug headers to the Contact() and Index() views of the app in views.py.
+
+2. FRAMEWORK: added @url class decorator to the Framework module /framework/framework.py
+(Lesson 5 official homework).
+It is applied to a view class, not a method, because we do not initialize views 
+until their instances are created for display. So we actually need to pass the whole class to the routing function
+for it to first call __init__() method to initialize the view ans then call its run() method to render its content.
+
+To make the functionality work, modified the Framework class to be Singleton and made some other minor changes 
+to the way the view structure is initialized and used in the Framework class.
+
+To show the functionality, added a @url header to the Contact() view of the app in views.py.
+
+3. FRAMEWORK: Class-Based Views (CBV)
+
+The CBV concept and Mixin usage possibility has been implemented in the framework since 28.03.2022 
+(see 28.03.2022 - Lesson 3 homework).
+Its implementation description is provided here for convenience because implementing it was the homework for today. 
+
+- All views are implemented as subclasses of the View class (/framework/views.py). 
+    - Every view should implement the run() method called by the framework to render the view. 
+    A Request instance of the current WSGI request is passed to the method, 
+    and it should return a Response object to the framework:
+    
+            def run(self, request: Request, *args, **kwargs) -> Response:
+                pass
+   
+    - Any view can implement the __init__() method to accept parameters, 
+    or/and implement the __new__() method, e.g. to make the class conform to singleton architecture. 
+    The default View has no __init__() or other initially called methods. 
+    - Any view can inherit other classes (multiple inheritance).
+    - View is instantiated each time it is called, right before calling its run() method. 
+    To make its data persistent or to perform pre- or post-initialization tasks on the view class, 
+    you can make it a singleton, for example, add the Singleton class to the list of the view's base classes.
+    
+- The app's view structure should be configured in the Url (/framework/urls.py) array 
+and is supposed to be placed in the app's urls.py file. 
+Each Url entry should have the following fields:
+    - URL of the view page, starting with a backslash and without a backslash at the end (if not root url);
+    - type reference (class name) of the class implementing the target view;
+    - dictionary of parameters to pass to the class initializer when its object is instantiated (can be empty dict);
+    - (optional) name of the view for the app's navigation menu;
+    - (optional) flag indicating whether this item should appear in the app's navigation menu 
+    (returned by the Framework().get_clean_urls(for_menu_only=True) method)
+    
+Following is the example structure of the file:
+
+        from framework.urls import Url
+        
+        from views import Index, Contact
+        from element_edit import ElementEditView
+        from category import Category
+        from course import Course, CourseEditView
+        
+        
+        import settings
+        
+        app_urls = [
+            Url('/', Index, {}, "Главная страница", True),
+            Url('/course/edit/*', CourseEditView, {'element_class': Course,
+                                                   'element_html_class_name': "Course",
+                                                   'html_template_form': settings.PATH_APP + "element_edit.html"},
+                "Курсы", False),
+            Url('/contact', Contact, {}, "Обратная связь", True)
+        ]
+
+- The @url (/framework/framework.py) decorator can be used on any view's class instead of configuring urls in the file 
+(see this changes section above).
+- There is an advanced view base class BaseView (/framework/views.py) subclassing the View class 
+(see 28.03.2022 - Lesson 3 homework). It can be used for displaying a segmented class-based view 
+with headers/footers and sidebars. It can be further subclassed or called directly.
+
+4. APP: Class-Based Views (CBV)
+
+The CBV concept and Mixins were used in the app since 28.03.2022 (see 28.03.2022 - Lesson 3 homework).
+The brief description of the classes is provided here for convenience because implementing it was the homework for today. 
+
+- All the app's view classes use the framework's BaseView class to render pages. 
+They do not subclass the BaseView class (see 28.03.2022 - Lesson 3 homework).
+- The ElementEditView (element_edit.py) class subclasses the framework's View class 
+and implements basic editing capabilities for a database record form having a 'name' field. 
+It uses the framework's BaseView class to render the page (see 02.04.2022 - Lesson 4 homework).
+It is used directly to edit categories (category.py). 
+- The CourseEditView (course.py) class subclasses ElementEditView and implements additional fields editing 
+to edit course records.
+- The app uses urls.py config file as well as the @url decorator to configure its urls.

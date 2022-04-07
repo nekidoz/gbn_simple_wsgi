@@ -3,7 +3,7 @@ from framework.request import Request
 from framework.response import Response
 from framework.persistence import Persistence
 from framework.views import BaseView
-from framework.logger import logging
+from framework.logger import debug
 
 
 # PARAMS:
