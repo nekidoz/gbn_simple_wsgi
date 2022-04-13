@@ -25,7 +25,7 @@ class Course(PersistenceSerializable):
     # Register Course's Persistence storage
     @staticmethod
     def register() -> bool:
-        return Persistence.register(Course, settings.COURSES_STORAGE, settings.COURSES_DATA_FILE)
+        return Persistence.register_class(Course, settings.COURSES_STORAGE, settings.COURSES_DATA_FILE)
 
 
 class CourseEditView(ElementEditView):

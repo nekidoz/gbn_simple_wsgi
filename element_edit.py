@@ -44,7 +44,7 @@ class ElementEditView(View):
             elif button == "save_new":
                 Persistence.engine(self.element_class).set(self.element_class(**request.query_params))
             elif button == "delete":
-                Persistence.engine(self.element_class).delete(self.element_class(id=element_id, **request.query_params))
+                Persistence.engine(self.element_class).delete(element_id)
             else:
                 pass
                 #pprint("Cancel requested")

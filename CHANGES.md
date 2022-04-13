@@ -58,7 +58,8 @@ View class using this functionality could look like this:
 
 ###02.04.2022 - Lesson 4 homework
 
-1. FRAMEWORK: Added Persistence (database) functionality in /framework/persistence.py.
+1. IMPORTANT!! FOR THE LATEST RELEASE SEE changes as of 14.04.2022
+FRAMEWORK: Added Persistence (database) functionality in /framework/persistence.py.
 The library implements get/set/delete functionality for custom classes.
 Custom class should contain an 'id' field identifying each class instance. 
 In case id is duplicated, more than one instance can be returned by the the library's data manipulating methods. 
@@ -352,3 +353,87 @@ It is used directly to edit categories (category.py).
 - The CourseEditView (course.py) class subclasses ElementEditView and implements additional fields editing 
 to edit course records.
 - The app uses urls.py config file as well as the @url decorator to configure its urls.
+
+##14.04.2022 - Lesson 7 Homework
+
+1. (FIRST INTRODUCED ON 02.04.2022)
+FRAMEWORK: Modified Persistence (database) functionality in /framework/persistence.py.
+The library implements get/set/delete functionality for custom classes.
+Custom class should contain an 'id' field identifying each class instance. 
+In case id is duplicated, more than one instance can be returned by the the library's data manipulating methods. 
+Currently implemented are the JSON storage engine.
+On 14.04.2022:
+- SQLite (sqlite3) support was added as external class PersistenceSQLite in framework/persistence_sqlite.py.
+- PersistenceEngineType enumeration was eliminated and engine type was made a string literal to make it possible to add 
+other storage engines support without modifying /framework/persistence.py framework module.
+- Persistence class was modified to store the list of storage engines as well as classes:
+    - register() method was renamed to register_class() to register classes,
+    - register_engine() method was added to register engines external to the Framework.
+- in PersistenceEngine class and subclasses, the delete() method parameter changed to the id of the element to delete.
+
+Following is the list of classes and constants in /framework/persistence.py:
+
+- ENGINE_JSON - string literal for JSON engine type
+- Persistence - facade class implementing 3 methods:
+    - register_engine() - (added 14.04.2022) to register an engine engine_type with class engine_initializer,
+    - register_class() - (renamed 14.04.2022) to register a class class_to_register to be stored 
+    in database of type engine_type with data found at data_source;
+    - engine() - to get database engine instance for registered class for_class
+- PersistenceEngine - interface with abstract __init()__, get(), set() and delete() methods 
+for engine initialization and data retrieval/saving/deletion;
+- PersistenceDataConfig - database internal configuration settings class
+- PersistenceSerializable - interface to be inherited by custom classes to be saved to JSON files;
+- PersistenceJSONCodec - class implementing JSON encoding and decoding for custom (PersistenceSerializable) classes;
+- PersistenceJSON - class implementing JSON data retrieval/saving/deletion, one data type (class) per file 
+(tested only on custom classes), automatically registered in the Persistence class, implementing the following methods:
+    - get() - get the stored data in a list; 
+    if element_id is specified, only the element(s) with the specified id is (are) returned;
+    - set() - replaces the element(s) in the stored data with matching id(s) 
+    with the scalar element passed to this method, 
+    or append the element passed to the method to the stored data if no matching id found;
+    - delete() - delete the first stored element with the id matching the one passed to this method, 
+    if any match found (parameter changed to the element id on 14.04.2022)
+
+Following is the list of classes and constants in /framework/persistence.py (added 14.04.2022):
+
+- PersistenceSQLite - class implementing SQLite (sqlite3) data retrieval/saving/deletion with the same functionality
+as the PersistenceJSON class above.
+NOTE that this class is NOT automatically registered with the Persistence class and needs to be MANUALLY registered
+(see usage example below).
+
+The usage model can be like this:
+
+    from framework.persistemce import PersistenceSerializable, Persistence, ENGINE_JSON
+    from framework.persistence_sqlite import PersistenceSQLite
+
+    class Course(PersistenceSerializable):      # Some custom class
+        id: uuid.UUID
+        name: str
+        description: str
+
+    class Category(PersistenceSerializable):    # Some other custom class
+        id: uuid.UUID
+        name: str
+        description: str
+
+    courses: [Course] = None
+    categories: [Category] = None
+    
+    # Register SQLite engine and initialize persistent storage for the Category and Course classes        
+    if not (PersistenceSQLite.register() and                                  
+            Persistence.register(Category, ENGINE_JSON, 'categories.json') and
+            Persistence.register(Course, ENGINE_SQLITE, 'database.sqlite')):
+        print("Failed to init data sources")
+    else:
+        categories = Persistence.engine(Category).get()             # load data from JSON
+        categories = Persistence.engine(Course).get()               # load data from SQLite
+            
+        # ... Do something with data
+            
+        Persistence.engine(Category).set(new_or_modified_category)  # save data to JSON
+        Persistence.engine(Course).set(new_or_modified_course   )   # save data to SQLite
+
+        # ... Do something else
+        
+        Persistence.engine(Category).delete(category_id_to_delete)  # delete an entry
+        Persistence.engine(Course).delete(course_id_to_delete)      # delete an entry

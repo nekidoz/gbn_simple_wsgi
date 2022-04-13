@@ -140,3 +140,276 @@
 2022-04-07T18:54:49.020566, DEBUG, debug, Index, Execution finished
 2022-04-07T18:54:49.020902, DEBUG, debug, run, Execution started
 2022-04-07T18:54:49.023879, DEBUG, debug, run, Execution finished
+2022-04-11T22:34:06.673648, DEBUG, debug, app, Test debug message
+2022-04-11T22:34:14.214297, DEBUG, debug, Index, Execution started
+2022-04-11T22:34:14.214642, DEBUG, debug, Index, Execution finished
+2022-04-11T22:34:14.214942, DEBUG, debug, run, Execution started
+2022-04-11T22:34:14.218909, DEBUG, debug, run, Execution finished
+2022-04-11T22:34:19.713510, DEBUG, debug, Index, Execution started
+2022-04-11T22:34:19.713857, DEBUG, debug, Index, Execution finished
+2022-04-11T22:34:19.714195, DEBUG, debug, run, Execution started
+2022-04-11T22:34:19.717053, DEBUG, debug, run, Execution finished
+2022-04-11T22:44:42.233043, DEBUG, debug, app, Test debug message
+2022-04-11T22:44:45.443452, DEBUG, debug, Index, Execution started
+2022-04-11T22:44:45.443847, DEBUG, debug, Index, Execution finished
+2022-04-11T22:44:45.444172, DEBUG, debug, run, Execution started
+2022-04-11T22:44:45.447215, DEBUG, debug, run, Execution finished
+2022-04-11T22:44:50.471427, DEBUG, debug, Index, Execution started
+2022-04-11T22:44:50.471792, DEBUG, debug, Index, Execution finished
+2022-04-11T22:44:50.472164, DEBUG, debug, run, Execution started
+2022-04-11T22:44:50.475107, DEBUG, debug, run, Execution finished
+2022-04-11T23:05:26.123138, DEBUG, debug, app, Test debug message
+2022-04-11T23:07:08.422898, DEBUG, debug, app, Test debug message
+2022-04-11T23:23:47.694994, DEBUG, debug, app, Test debug message
+2022-04-11T23:23:53.692990, DEBUG, debug, Index, Execution started
+2022-04-11T23:23:53.693352, DEBUG, debug, Index, Execution finished
+2022-04-11T23:23:53.693682, DEBUG, debug, run, Execution started
+2022-04-11T23:23:53.696883, DEBUG, debug, run, Execution finished
+2022-04-11T23:24:01.645703, DEBUG, debug, Index, Execution started
+2022-04-11T23:24:01.646164, DEBUG, debug, Index, Execution finished
+2022-04-11T23:24:01.646499, DEBUG, debug, run, Execution started
+2022-04-11T23:24:01.649548, DEBUG, debug, run, Execution finished
+2022-04-11T23:24:20.005712, DEBUG, debug, Index, Execution started
+2022-04-11T23:24:20.006152, DEBUG, debug, Index, Execution finished
+2022-04-11T23:24:20.006485, DEBUG, debug, run, Execution started
+2022-04-11T23:24:20.009513, DEBUG, debug, run, Execution finished
+2022-04-12T12:01:03.853099, DEBUG, debug, app, Test debug message
+2022-04-12T15:18:32.678827, DEBUG, debug, app, Test debug message
+2022-04-12T15:22:57.379921, DEBUG, debug, app, Test debug message
+2022-04-12T15:23:20.498063, DEBUG, debug, app, Test debug message
+2022-04-12T15:25:30.596899, DEBUG, debug, app, Test debug message
+2022-04-12T15:48:45.913858, DEBUG, debug, app, Test debug message
+2022-04-12T15:52:28.142805, DEBUG, debug, app, Test debug message
+2022-04-12T15:52:58.347287, DEBUG, debug, app, Test debug message
+2022-04-12T16:01:33.588871, DEBUG, debug, app, Test debug message
+2022-04-12T16:13:25.385637, DEBUG, debug, app, Test debug message
+2022-04-12T16:15:09.375844, DEBUG, debug, app, Test debug message
+2022-04-12T16:16:20.806889, DEBUG, debug, app, Test debug message
+2022-04-12T16:16:41.549233, DEBUG, debug, app, Test debug message
+2022-04-12T16:17:49.854572, DEBUG, debug, app, Test debug message
+2022-04-12T16:18:37.349625, DEBUG, debug, app, Test debug message
+2022-04-12T16:22:26.138638, DEBUG, debug, app, Test debug message
+2022-04-12T16:24:43.186432, DEBUG, debug, app, Test debug message
+2022-04-12T16:25:47.589339, DEBUG, debug, app, Test debug message
+2022-04-12T16:26:17.860257, DEBUG, debug, app, Test debug message
+2022-04-12T16:27:01.407914, DEBUG, debug, app, Test debug message
+2022-04-12T17:14:26.876773, DEBUG, debug, app, Test debug message
+2022-04-12T17:24:00.441486, DEBUG, debug, app, Test debug message
+2022-04-12T17:28:33.956076, DEBUG, debug, app, Test debug message
+2022-04-12T17:30:28.157591, DEBUG, debug, app, Test debug message
+2022-04-12T17:33:12.352218, DEBUG, debug, app, Test debug message
+2022-04-12T17:34:18.830011, DEBUG, debug, app, Test debug message
+2022-04-12T17:34:58.059981, DEBUG, debug, app, Test debug message
+2022-04-12T17:35:54.947836, DEBUG, debug, app, Test debug message
+2022-04-12T17:55:36.919139, DEBUG, debug, app, Test debug message
+2022-04-12T17:57:55.617937, DEBUG, debug, app, Test debug message
+2022-04-12T19:26:54.594909, DEBUG, debug, app, Test debug message
+2022-04-13T02:21:50.505252, DEBUG, debug, app, Test debug message
+2022-04-13T04:22:38.102392, DEBUG, debug, app, Test debug message
+2022-04-13T06:23:26.802487, DEBUG, debug, app, Test debug message
+2022-04-13T08:24:14.605754, DEBUG, debug, app, Test debug message
+2022-04-13T09:00:14.811244, DEBUG, debug, app, Test debug message
+2022-04-13T10:01:53.055249, DEBUG, debug, app, Test debug message
+2022-04-13T13:15:55.008922, DEBUG, debug, app, Test debug message
+2022-04-13T13:26:47.301527, DEBUG, debug, app, Test debug message
+2022-04-13T13:27:46.475290, DEBUG, debug, app, Test debug message
+2022-04-13T13:28:59.911439, DEBUG, debug, app, Test debug message
+2022-04-13T13:35:36.578313, DEBUG, debug, app, Test debug message
+2022-04-13T13:40:15.066169, DEBUG, debug, app, Test debug message
+2022-04-13T13:41:10.499255, DEBUG, debug, app, Test debug message
+2022-04-13T13:41:50.900087, DEBUG, debug, app, Test debug message
+2022-04-13T13:42:48.357243, DEBUG, debug, app, Test debug message
+2022-04-13T13:44:45.568018, DEBUG, debug, app, Test debug message
+2022-04-13T13:52:40.045606, DEBUG, debug, app, Test debug message
+2022-04-13T13:55:52.817665, DEBUG, debug, app, Test debug message
+2022-04-13T13:56:45.520486, DEBUG, debug, app, Test debug message
+2022-04-13T13:59:11.468538, DEBUG, debug, app, Test debug message
+2022-04-13T14:00:40.318698, DEBUG, debug, app, Test debug message
+2022-04-13T14:05:39.316071, DEBUG, debug, app, Test debug message
+2022-04-13T14:05:59.166498, DEBUG, debug, app, Test debug message
+2022-04-13T14:06:31.768164, DEBUG, debug, app, Test debug message
+2022-04-13T14:11:09.853586, DEBUG, debug, app, Test debug message
+2022-04-13T14:13:30.736992, DEBUG, debug, app, Test debug message
+2022-04-13T14:15:19.231686, DEBUG, debug, app, Test debug message
+2022-04-13T14:15:24.440849, DEBUG, debug, app, Test debug message
+2022-04-13T14:16:24.577894, DEBUG, debug, app, Test debug message
+2022-04-13T14:16:40.168847, DEBUG, debug, app, Test debug message
+2022-04-13T14:30:48.555169, DEBUG, debug, app, Test debug message
+2022-04-13T14:34:51.148082, DEBUG, debug, app, Test debug message
+2022-04-13T14:35:09.438684, DEBUG, debug, app, Test debug message
+2022-04-13T15:10:47.153439, DEBUG, debug, app, Test debug message
+2022-04-13T15:12:12.793357, DEBUG, debug, app, Test debug message
+2022-04-13T15:13:05.821952, DEBUG, debug, app, Test debug message
+2022-04-13T15:13:32.697028, DEBUG, debug, app, Test debug message
+2022-04-13T15:13:41.459621, DEBUG, debug, app, Test debug message
+2022-04-13T15:31:26.847211, DEBUG, debug, app, Test debug message
+2022-04-13T15:31:40.928200, DEBUG, debug, app, Test debug message
+2022-04-13T15:31:50.061704, DEBUG, debug, app, Test debug message
+2022-04-13T15:32:09.870701, DEBUG, debug, app, Test debug message
+2022-04-13T15:32:20.152916, DEBUG, debug, app, Test debug message
+2022-04-13T15:37:37.502008, DEBUG, debug, Index, Execution started
+2022-04-13T15:37:37.502369, DEBUG, debug, Index, Execution finished
+2022-04-13T15:37:37.502791, DEBUG, debug, run, Execution started
+2022-04-13T15:37:37.505957, DEBUG, debug, run, Execution finished
+2022-04-13T15:37:44.815686, DEBUG, debug, Index, Execution started
+2022-04-13T15:37:44.816007, DEBUG, debug, Index, Execution finished
+2022-04-13T15:37:44.816296, DEBUG, debug, run, Execution started
+2022-04-13T15:37:44.819201, DEBUG, debug, run, Execution finished
+2022-04-13T15:37:47.750214, DEBUG, debug, Index, Execution started
+2022-04-13T15:37:47.750557, DEBUG, debug, Index, Execution finished
+2022-04-13T15:37:47.750950, DEBUG, debug, run, Execution started
+2022-04-13T15:37:47.753820, DEBUG, debug, run, Execution finished
+2022-04-13T15:38:08.577409, DEBUG, debug, Index, Execution started
+2022-04-13T15:38:08.577744, DEBUG, debug, Index, Execution finished
+2022-04-13T15:38:08.578032, DEBUG, debug, run, Execution started
+2022-04-13T15:38:08.580922, DEBUG, debug, run, Execution finished
+2022-04-13T15:38:16.276807, DEBUG, debug, Index, Execution started
+2022-04-13T15:38:16.277144, DEBUG, debug, Index, Execution finished
+2022-04-13T15:38:16.277434, DEBUG, debug, run, Execution started
+2022-04-13T15:38:16.280386, DEBUG, debug, run, Execution finished
+2022-04-13T15:42:21.499739, DEBUG, debug, app, Test debug message
+2022-04-13T15:43:10.593030, DEBUG, debug, app, Test debug message
+2022-04-13T15:43:34.703171, DEBUG, debug, Index, Execution started
+2022-04-13T15:43:34.703559, DEBUG, debug, Index, Execution finished
+2022-04-13T15:43:34.703887, DEBUG, debug, run, Execution started
+2022-04-13T15:43:34.707212, DEBUG, debug, run, Execution finished
+2022-04-13T15:43:36.941185, DEBUG, debug, Index, Execution started
+2022-04-13T15:43:36.941527, DEBUG, debug, Index, Execution finished
+2022-04-13T15:43:36.941920, DEBUG, debug, run, Execution started
+2022-04-13T15:43:36.944774, DEBUG, debug, run, Execution finished
+2022-04-13T15:43:37.661292, DEBUG, debug, Index, Execution started
+2022-04-13T15:43:37.661644, DEBUG, debug, Index, Execution finished
+2022-04-13T15:43:37.661976, DEBUG, debug, run, Execution started
+2022-04-13T15:43:37.664806, DEBUG, debug, run, Execution finished
+2022-04-13T15:43:59.349985, DEBUG, debug, Index, Execution started
+2022-04-13T15:43:59.350378, DEBUG, debug, Index, Execution finished
+2022-04-13T15:43:59.350714, DEBUG, debug, run, Execution started
+2022-04-13T15:43:59.353777, DEBUG, debug, run, Execution finished
+2022-04-13T15:44:18.493508, DEBUG, debug, app, Test debug message
+2022-04-13T15:44:39.488024, DEBUG, debug, Index, Execution started
+2022-04-13T15:44:39.488375, DEBUG, debug, Index, Execution finished
+2022-04-13T15:44:39.488775, DEBUG, debug, run, Execution started
+2022-04-13T15:44:39.491839, DEBUG, debug, run, Execution finished
+2022-04-13T15:45:02.203492, DEBUG, debug, Index, Execution started
+2022-04-13T15:45:02.203897, DEBUG, debug, Index, Execution finished
+2022-04-13T15:45:02.204242, DEBUG, debug, run, Execution started
+2022-04-13T15:45:02.207248, DEBUG, debug, run, Execution finished
+2022-04-13T15:58:46.593757, DEBUG, debug, app, Test debug message
+2022-04-13T15:58:56.134310, DEBUG, debug, Index, Execution started
+2022-04-13T15:58:56.134692, DEBUG, debug, Index, Execution finished
+2022-04-13T15:58:56.135019, DEBUG, debug, run, Execution started
+2022-04-13T16:06:35.127540, DEBUG, debug, app, Test debug message
+2022-04-13T16:06:41.767108, DEBUG, debug, Index, Execution started
+2022-04-13T16:06:41.767476, DEBUG, debug, Index, Execution finished
+2022-04-13T16:06:41.767876, DEBUG, debug, run, Execution started
+2022-04-13T16:07:48.922764, DEBUG, debug, app, Test debug message
+2022-04-13T16:07:52.266995, DEBUG, debug, Index, Execution started
+2022-04-13T16:07:52.267344, DEBUG, debug, Index, Execution finished
+2022-04-13T16:07:52.267791, DEBUG, debug, run, Execution started
+2022-04-13T16:07:52.270946, DEBUG, debug, run, Execution finished
+2022-04-13T22:41:18.991715, DEBUG, debug, app, Test debug message
+2022-04-13T22:41:28.306852, DEBUG, debug, Index, Execution started
+2022-04-13T22:41:28.307212, DEBUG, debug, Index, Execution finished
+2022-04-13T22:41:28.307535, DEBUG, debug, run, Execution started
+2022-04-13T22:41:28.310837, DEBUG, debug, run, Execution finished
+2022-04-13T22:49:30.534745, DEBUG, debug, app, Test debug message
+2022-04-13T22:49:36.219478, DEBUG, debug, Index, Execution started
+2022-04-13T22:49:36.219832, DEBUG, debug, Index, Execution finished
+2022-04-13T22:49:36.220159, DEBUG, debug, run, Execution started
+2022-04-13T22:49:36.223527, DEBUG, debug, run, Execution finished
+2022-04-13T22:51:45.423720, DEBUG, debug, app, Test debug message
+2022-04-13T22:51:48.586690, DEBUG, debug, Index, Execution started
+2022-04-13T22:51:48.587035, DEBUG, debug, Index, Execution finished
+2022-04-13T22:51:48.587344, DEBUG, debug, run, Execution started
+2022-04-13T22:51:48.590659, DEBUG, debug, run, Execution finished
+2022-04-13T22:52:50.209022, DEBUG, debug, app, Test debug message
+2022-04-13T22:52:52.394065, DEBUG, debug, Index, Execution started
+2022-04-13T22:52:52.394415, DEBUG, debug, Index, Execution finished
+2022-04-13T22:52:52.394808, DEBUG, debug, run, Execution started
+2022-04-13T22:52:52.398164, DEBUG, debug, run, Execution finished
+2022-04-13T22:59:10.972710, DEBUG, debug, app, Test debug message
+2022-04-13T22:59:15.450886, DEBUG, debug, Index, Execution started
+2022-04-13T22:59:15.451242, DEBUG, debug, Index, Execution finished
+2022-04-13T22:59:15.451646, DEBUG, debug, run, Execution started
+2022-04-13T22:59:15.454748, DEBUG, debug, run, Execution finished
+2022-04-13T23:06:22.828684, DEBUG, debug, app, Test debug message
+2022-04-13T23:07:07.846093, DEBUG, debug, app, Test debug message
+2022-04-13T23:07:18.683793, DEBUG, debug, Index, Execution started
+2022-04-13T23:07:18.684174, DEBUG, debug, Index, Execution finished
+2022-04-13T23:07:18.684507, DEBUG, debug, run, Execution started
+2022-04-13T23:07:18.687683, DEBUG, debug, run, Execution finished
+2022-04-13T23:07:24.192442, DEBUG, debug, Index, Execution started
+2022-04-13T23:07:24.192784, DEBUG, debug, Index, Execution finished
+2022-04-13T23:07:24.193093, DEBUG, debug, run, Execution started
+2022-04-13T23:07:24.195919, DEBUG, debug, run, Execution finished
+2022-04-13T23:07:27.756719, DEBUG, debug, Index, Execution started
+2022-04-13T23:07:27.757053, DEBUG, debug, Index, Execution finished
+2022-04-13T23:07:27.757342, DEBUG, debug, run, Execution started
+2022-04-13T23:07:27.760209, DEBUG, debug, run, Execution finished
+2022-04-13T23:07:41.409859, DEBUG, debug, Index, Execution started
+2022-04-13T23:07:41.410370, DEBUG, debug, Index, Execution finished
+2022-04-13T23:07:41.410718, DEBUG, debug, run, Execution started
+2022-04-13T23:07:41.413731, DEBUG, debug, run, Execution finished
+2022-04-13T23:07:46.493058, DEBUG, debug, Index, Execution started
+2022-04-13T23:07:46.493393, DEBUG, debug, Index, Execution finished
+2022-04-13T23:07:46.493674, DEBUG, debug, run, Execution started
+2022-04-13T23:07:46.496638, DEBUG, debug, run, Execution finished
+2022-04-13T23:07:52.196823, DEBUG, debug, Index, Execution started
+2022-04-13T23:07:52.197166, DEBUG, debug, Index, Execution finished
+2022-04-13T23:07:52.197451, DEBUG, debug, run, Execution started
+2022-04-13T23:07:52.200273, DEBUG, debug, run, Execution finished
+2022-04-13T23:07:54.909586, DEBUG, debug, Index, Execution started
+2022-04-13T23:07:54.909969, DEBUG, debug, Index, Execution finished
+2022-04-13T23:07:54.910293, DEBUG, debug, run, Execution started
+2022-04-13T23:07:54.913338, DEBUG, debug, run, Execution finished
+2022-04-13T23:07:57.810335, DEBUG, debug, Index, Execution started
+2022-04-13T23:07:57.810661, DEBUG, debug, Index, Execution finished
+2022-04-13T23:07:57.810945, DEBUG, debug, run, Execution started
+2022-04-13T23:07:57.813800, DEBUG, debug, run, Execution finished
+2022-04-13T23:08:03.716950, DEBUG, debug, Index, Execution started
+2022-04-13T23:08:03.717291, DEBUG, debug, Index, Execution finished
+2022-04-13T23:08:03.717577, DEBUG, debug, run, Execution started
+2022-04-13T23:08:03.720433, DEBUG, debug, run, Execution finished
+2022-04-13T23:08:11.911675, DEBUG, debug, Index, Execution started
+2022-04-13T23:08:11.911994, DEBUG, debug, Index, Execution finished
+2022-04-13T23:08:11.912280, DEBUG, debug, run, Execution started
+2022-04-13T23:08:11.915257, DEBUG, debug, run, Execution finished
+2022-04-13T23:08:24.431420, DEBUG, debug, Index, Execution started
+2022-04-13T23:08:24.431765, DEBUG, debug, Index, Execution finished
+2022-04-13T23:08:24.432078, DEBUG, debug, run, Execution started
+2022-04-13T23:08:24.435000, DEBUG, debug, run, Execution finished
+2022-04-13T23:08:46.509048, DEBUG, debug, Index, Execution started
+2022-04-13T23:08:46.509413, DEBUG, debug, Index, Execution finished
+2022-04-13T23:08:46.509725, DEBUG, debug, run, Execution started
+2022-04-13T23:08:46.512584, DEBUG, debug, run, Execution finished
+2022-04-13T23:08:53.712498, DEBUG, debug, Index, Execution started
+2022-04-13T23:08:53.712817, DEBUG, debug, Index, Execution finished
+2022-04-13T23:08:53.713097, DEBUG, debug, run, Execution started
+2022-04-13T23:08:53.715876, DEBUG, debug, run, Execution finished
+2022-04-13T23:09:10.414170, DEBUG, debug, Index, Execution started
+2022-04-13T23:09:10.414509, DEBUG, debug, Index, Execution finished
+2022-04-13T23:09:10.414793, DEBUG, debug, run, Execution started
+2022-04-13T23:09:10.417623, DEBUG, debug, run, Execution finished
+2022-04-13T23:09:25.599582, DEBUG, debug, Index, Execution started
+2022-04-13T23:09:25.599925, DEBUG, debug, Index, Execution finished
+2022-04-13T23:09:25.600212, DEBUG, debug, run, Execution started
+2022-04-13T23:09:25.603029, DEBUG, debug, run, Execution finished
+2022-04-13T23:09:35.385043, DEBUG, debug, Index, Execution started
+2022-04-13T23:09:35.385412, DEBUG, debug, Index, Execution finished
+2022-04-13T23:09:35.385729, DEBUG, debug, run, Execution started
+2022-04-13T23:09:35.388646, DEBUG, debug, run, Execution finished
+2022-04-14T00:42:58.037214, DEBUG, debug, app, Test debug message
+2022-04-14T00:43:04.029304, DEBUG, debug, Index, Execution started
+2022-04-14T00:43:04.029665, DEBUG, debug, Index, Execution finished
+2022-04-14T00:43:04.030071, DEBUG, debug, run, Execution started
+2022-04-14T00:43:04.033187, DEBUG, debug, run, Execution finished
+2022-04-14T00:43:41.664286, DEBUG, debug, app, Test debug message
+2022-04-14T00:43:44.411546, DEBUG, debug, Index, Execution started
+2022-04-14T00:43:44.411886, DEBUG, debug, Index, Execution finished
+2022-04-14T00:43:44.412182, DEBUG, debug, run, Execution started
+2022-04-14T00:43:44.415313, DEBUG, debug, run, Execution finished
+2022-04-14T00:44:09.123521, DEBUG, debug, app, Test debug message
+2022-04-14T00:44:11.678905, DEBUG, debug, Index, Execution started
+2022-04-14T00:44:11.679290, DEBUG, debug, Index, Execution finished
+2022-04-14T00:44:11.679618, DEBUG, debug, run, Execution started
+2022-04-14T00:44:11.682709, DEBUG, debug, run, Execution finished

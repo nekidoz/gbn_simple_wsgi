@@ -19,4 +19,4 @@ class Category(PersistenceSerializable):
     # Register Category's Persistence storage
     @staticmethod
     def register() -> bool:
-        return Persistence.register(Category, settings.CATEGORIES_STORAGE, settings.CATEGORIES_DATA_FILE)
+        return Persistence.register_class(Category, settings.CATEGORIES_STORAGE, settings.CATEGORIES_DATA_FILE)

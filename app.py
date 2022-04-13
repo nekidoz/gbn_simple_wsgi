@@ -3,10 +3,12 @@
 """
 
 from pprint import pprint
+import uuid
 
 from framework.framework import Framework
 from framework.views import BaseViewLayout, BaseViewSection
 from framework.logger import LoggerFabric, Log, LoggerLevel
+from framework.persistence_sqlite import PersistenceSQLite
 
 from urls import app_urls
 from logs import loggers, handlers
@@ -23,6 +25,7 @@ log_d = Log(settings.LOGGER_DEBUG, LoggerLevel.DEBUG, 'app')
 log_r = Log(settings.LOGGER_RUNTIME, LoggerLevel.INFO, 'app')
 log_d("Test debug message")
 log_r("Test runtime message")
+PersistenceSQLite.register()
 app = Framework(app_urls, use_admin=True)                   # Create application object
 if not (Category.register() and Course.register()):         # Initialize persistence data
     print("Failed to init data sources")

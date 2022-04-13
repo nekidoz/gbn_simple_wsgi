@@ -7,14 +7,15 @@ from pprint import pprint
 
 from framework import settings
 
-
-# persistent engines
-class PersistenceEngineType(Enum):
-    JSON = 1
+ENGINE_JSON = 'json'                    # Engine name constant
 
 
 # PersistenceEngine storage Interface class
 class PersistenceEngine(ABC):
+
+    @abstractmethod
+    def __init__(self, data_source: str, class_initializer):
+        pass
 
     # Get entity method, return stored data object; data object parameter needed to decode custom types
     @abstractmethod
@@ -26,39 +27,18 @@ class PersistenceEngine(ABC):
     def set(self, element) -> bool:
         pass
 
+    # Delete the specified element
     @abstractmethod
-    def delete(self, element) -> bool:
+    def delete(self, element_id: UUID) -> bool:
         pass
+
 
 # data access configuration
 @dataclass
 class PersistenceDataConfig:
-    engineType: PersistenceEngineType
+    engineType: str
     dataSource: str
     engine: PersistenceEngine
-
-
-# Class holding PersistenceEngine objects for all registered classes
-# Call register() to register a class,
-# then call engine() to access the PersistenceEngine for this class and call its methods to get data
-class Persistence:
-    __classes = {}
-
-    @staticmethod
-    def register(class_to_register, engine_type: PersistenceEngineType, data_source: str) -> bool:
-        # Get persistence engine instance
-        if engine_type == PersistenceEngineType.JSON:
-            engine = PersistenceJSON(data_source, class_to_register)
-        else:
-            return False  # fail if invalid engine type
-        # Register persistent class in the dictionary
-        Persistence.__classes[class_to_register] = PersistenceDataConfig(engine_type, data_source, engine)
-        #pprint(Persistence.__classes)
-        return True
-
-    @staticmethod
-    def engine(for_class):
-        return Persistence.__classes[for_class].engine
 
 
 # A custom class that has to be serialized to JSON by PersistenceJSON should inherit this class
@@ -100,13 +80,14 @@ class PersistenceJSONCodec(json.JSONEncoder):
 # JSON persistence storage class
 # PARAMS:
 # jsonFile - JSON file full path (__init__())
-# jsonClass - pathon Class name to correcty restore it from JSON file (__init__()
+# jsonClass - Python Class name to correctly restore it from JSON file (__init__()
 class PersistenceJSON(PersistenceEngine):
     error_object = None                     # Error object of the last unsuccessful operation
     error_message = ""                      # Error message of the last unsuccessful operation
 
     # JSON files directory path should be passed to data_source
     def __init__(self, data_source: str, class_initializer):
+        super().__init__(data_source=data_source, class_initializer=class_initializer)
         self.jsonFile = data_source
         self.jsonClass = class_initializer
 
@@ -163,11 +144,11 @@ class PersistenceJSON(PersistenceEngine):
         # Write results
         return self._dump_array(array)
 
-    def delete(self, element) -> bool:
+    def delete(self, element_id: UUID) -> bool:
         # Get the existing data
         array = self.get()
         # Search for existing element
-        existing_element = [existing_element for existing_element in array if existing_element.id == element.id]
+        existing_element = [existing_element for existing_element in array if existing_element.id == element_id]
         # Remove element with the specified id if found
         if existing_element and existing_element != []:
             # Delete the element
@@ -175,3 +156,32 @@ class PersistenceJSON(PersistenceEngine):
         # Write results
         return self._dump_array(array)
 
+
+# Class holding PersistenceEngine objects for all registered classes
+# Call register_class() to register a class,
+# then call engine() to access the PersistenceEngine for this class and call its methods to get data
+class Persistence:
+    _classes = {}                   # PersistenceEngine objects for all registered classes
+    _engines = {                    # concrete PersistentEngine classes references
+        ENGINE_JSON: PersistenceJSON
+    }
+
+    # register a class
+    @staticmethod
+    def register_class(class_to_register, engine_type: str, data_source: str) -> bool:
+        # Get persistence engine instance
+        engine = Persistence._engines[engine_type](data_source, class_to_register)
+        # Register persistent class in the dictionary
+        Persistence._classes[class_to_register] = PersistenceDataConfig(engine_type, data_source, engine)
+        return True
+
+    # register an engine
+    @staticmethod
+    def register_engine(engine_type: str, engine_initializer) -> bool:
+        Persistence._engines[engine_type] = engine_initializer
+        return True
+
+    # return the engine object for the class
+    @staticmethod
+    def engine(for_class):
+        return Persistence._classes[for_class].engine
