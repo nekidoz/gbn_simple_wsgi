@@ -13,19 +13,21 @@ from framework.framework import url
 import settings
 from category import Category
 from course import Course
+from student import Student
 
 
 # Main page controller  - SINGLETON! Initialize it with menu urls when Framework is initialized!
-@debug
+#@debug
 class Index(View, Singleton):
-    HTML_TEMPLATE = settings.PATH_APP + "index.html"             # Page template
+    HTML_TEMPLATE = settings.TEMPLATES_APP + "/index.html"             # Page template
 
-    @debug
+    #@debug
     def run(self, request: Request, *args, **kwargs) -> Response:
         return BaseView(self.HTML_TEMPLATE,
                         title="Главная страница",
                         categories=Persistence.engine(Category).get(),
                         courses=Persistence.engine(Course).get(),
+                        students=Persistence.engine(Student).get(),
                         ).run(request)
 
 
@@ -37,19 +39,19 @@ class Index(View, Singleton):
 #   или права на создание такой папки в папке page controller'ов
 # Метод GET отображает форму.
 # Метод POST записывает данные формы в папку сообщений в файл с именем в формате YYYY-MM-DDTHH-MM-SS_email.
-@debug(logger='runtime', level=LoggerLevel.INFO)
+#@debug(logger='runtime', level=LoggerLevel.INFO)
 @url('/kakaka', name="Обратная связь через декоратор", in_menu=True)
 class Contact(View):
 
-    HTML_TEMPLATE_FORM = settings.PATH_APP + "contact.html"             # Шаблон формы обратной связи
-    HTML_TEMPLATE_SUCCESS = settings.PATH_APP + "contact_success.html"  # Шаблон страницы успеха
+    HTML_TEMPLATE_FORM = settings.TEMPLATES_APP + "/contact.html"             # Шаблон формы обратной связи
+    HTML_TEMPLATE_SUCCESS = settings.TEMPLATES_APP + "/contact_success.html"  # Шаблон страницы успеха
     PATH_CONTACT_MESSAGES = settings.PATH_APP + "contact_messages/"     # Папка для файлов сообщений
     QPARAM_NAME = "name"                                                # Параметры POST с полями сообщения
     QPARAM_EMAIL = "email"
     QPARAM_TITLE = "title"
     QPARAM_MESSAGE = "msg"
 
-    @debug(logger='runtime', level=LoggerLevel.INFO)
+    #@debug(logger='runtime', level=LoggerLevel.INFO)
     def run(self, request: Request, *args, **kwargs) -> Response:
         if request.method == "GET":             # GET: отобразить форму обратной связи
             return BaseView(self.HTML_TEMPLATE_FORM, *args, **kwargs).run(request)

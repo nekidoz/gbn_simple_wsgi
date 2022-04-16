@@ -4,6 +4,7 @@ from framework.persistence import Persistence, PersistenceSerializable
 from framework.request import Request
 from framework.response import Response
 
+from miscellaneous import build_choice_list
 from element_edit import ElementEditView
 from category import Category
 import settings
@@ -37,30 +38,9 @@ class CourseEditView(ElementEditView):
         # Rebuild the category list, adding an empty category and placing the course's category at the top of the list
         if request.method == "GET":                         # only processing GET
             # Get the categories list - needed anyway by the form
-            categories = Persistence.engine(Category).get()
-            final_list = []  # final list of categories for the form
+            categories = build_choice_list(Category, Course, request.path_array[len(request.path_array) - 1],
+                                           'category_id')
 
-            # get the edited course instance and put it's category on top of the categories list
-            course_id = request.path_array[len(request.path_array) - 1]
-            course = Persistence.engine(Course).get(course_id)
-            if course and course != []:                   # if the course instance found
-
-                category_id = course[0].category_id
-                if category_id:                             # if the course has a category assigned
-                    # search for the course's category in the existing categories
-                    category = [category for category in categories if category.id == category_id]
-                    if category and category != []:         # if the course's category exists in the list
-                        final_list.append(category[0])               # set the course's category as the first in the list
-                        categories.remove(category[0])
-
-            # create an empty category and put it on top or next to the course's category
-            empty_category = Category(name="")
-            empty_category.id = None                        # explicitly clear the id
-            final_list.append(empty_category)
-
-            # append the rest of the categories list
-            final_list.extend(categories)
-
-            return super().run(request, categories=final_list, *args, **kwargs)
+            return super().run(request, categories=categories, *args, **kwargs)
         else:
             return super().run(request, *args, **kwargs)

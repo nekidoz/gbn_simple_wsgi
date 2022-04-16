@@ -4,8 +4,8 @@ from copy import deepcopy
 from functools import wraps
 
 from framework.request import Request
+from framework.response import Response
 from framework import settings
-from framework.views import View404
 from framework.urls import admin_urls, Url
 from framework.singleton import Singleton
 from framework.logger import debug, Log
@@ -23,6 +23,7 @@ from framework.logger import debug, Log
 # router processes full URL paths and wildcard (e.g. /someurl/*) URLs (see urls.py for example)
 class Framework(Singleton):
 
+    # Initialize app and admin urls
     def __init__(self, urls: [Url] = None, use_admin: bool = False):
         if not hasattr(self, 'urls'):           # Initialize attribute if it doesn't exist
             self.urls = []
@@ -42,9 +43,14 @@ class Framework(Singleton):
         if view:
             response = view.run(self.request)
             if not response:
-                response = View404().run(self.request)
+                # Had to somehow untie framework and views files circular reference - invented redirect ))
+                response = Response(status_code=settings.STATUS_NOT_FOUND,
+                                    headers={'Location': settings.URL_NOT_FOUND + f"?page={self.request.path}"})
+                #response = View404().run(self.request)
         else:
-            response = View404().run(self.request)
+            response = Response(status_code=settings.STATUS_NOT_FOUND,
+                                headers={'Location': settings.URL_NOT_FOUND + f"?page={self.request.path}"})
+            #response = View404().run(self.request)
 
         # сначала в функцию start_response передаем код ответа и заголовки
         start_response(str(response.status_code), response.headers.items())

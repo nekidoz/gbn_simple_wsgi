@@ -1,28 +1,22 @@
 {% extends base_view_template %}
-<!-- Parameters: element - the element class instance
+<!-- Parameters: class_name - name of the class being edited
+                 element - the element class instance
                  is_new - new element flag
-                 element_class - element class name
+                 element_title - element class name
+                 editor_fields - form fields to edit the class attributes of the element - loaded as an include
 -->
 {% block baseview_body %}
     <p><a href="/">Домой</a></p>
 
     {% if is_new %}
-        {% if element_class == "Category" %}
-    <h1>Создание категории учебного курса</h1>
-        {% else %}
-    <h1>Создание учебного курса</h1>
-        {% endif %}
+    <h1>{{element_title}} - cоздание</h1>
     <p>Заполните поля,<br>
         нажмите <b>"Сохранить"</b>, чтобы сохранить новую запись, или<br>
         <b>"Отменить"</b>, чтобы отменить создание записи.
     </p>
     <br>
     {% else %}
-        {% if element_class == "Category" %}
-    <h1>Редактирование категории учебного курса</h1>
-        {% else %}
-    <h1>Редактирование учебного курса</h1>
-        {% endif %}
+    <h1>{{element_title}} - редактирование</h1>
     <p>Измените поля,<br>
         нажмите <b>"Сохранить"</b>, чтобы сохранить изменения,<br>
         <b>"Сохранить в новой записи"</b>, чтобы сохранить внесенные изменения как новую запись, или<br>
@@ -36,28 +30,7 @@
     <!-- Форма с аргументами запроса для метода GET -->
     <form action="" method="post">
         <table>
-            <tr><td style="text-align:right"><label for="name">* <b>Название</b></label></td>
-                <td style="text-align:left;padding-top:10px;padding-bottom:10px">
-                    {% if is_new %}
-                    <input style="font-size:medium" size="60" name="name" id="name"
-                           required>
-                    {% else %}
-                    <input style="font-size:medium" size="60" name="name" id="name" value="{{element.name|e}}"
-                           required>
-                    {% endif %}
-                </td>
-            </tr>
-                {% if element_class == "Course" %}
-            <tr><td style="text-align:right"><label for="name"><b>Категория</b></label></td>
-                <td style="text-align:left;padding-top:10px;padding-bottom:10px">
-                    <select style="font-size:medium" name="category_id" value="{{element.category_id}}">
-                        {% for category in categories %}
-                            <option value="{{ category.id }}"> {{ category.name|e }} </option>
-                        {% endfor %}
-                    </select>
-                </td>
-            </tr>
-                {% endif %}
+            {% include editor_fields ignore missing %}
             <tr><td colspan="2" style="text-align:left;padding-top:20px">* - обязательное поле</td></tr>
             <tr><td colspan="2" style="text-align:center;padding-top:20px">
                 {% if is_new %}
@@ -72,4 +45,4 @@
             </td></tr>
         </table>
     </form>
-{% endblock %}
+{% endblock baseview_body %}

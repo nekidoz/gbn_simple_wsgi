@@ -1,6 +1,6 @@
 # REFERENCE DESIGN
 from abc import ABC, abstractmethod
-from jinja2 import Template  # Используем шаблонизатор Jinja2
+from jinja2 import Template, TemplateNotFound                 # Используем шаблонизатор Jinja2
 from dataclasses import dataclass
 from enum import Enum
 from pprint import pprint
@@ -8,15 +8,14 @@ from pprint import pprint
 from framework.request import Request
 from framework.response import Response
 from framework import settings
+from framework.settings import Environ
 from framework.singleton import Singleton
 
-# Структура каталогов приложения
-PATH_TEMPLATES = "framework/templates/"                    # путь к шаблонам служебных html-страниц
 
 # Admin Page templates
-TEMPLATE_404 = "error404.html"  # Страница сообщения об ошибке URL
-TEMPLATE_INDEX = "index.html"  # Главная страница
-TEMPLATE_PARAMETER = "parameter.html"  # Страница индивидуальных параемтров
+TEMPLATE_404 = settings.TEMPLATES_FW + "/error404.html"  # Страница сообщения об ошибке URL
+TEMPLATE_INDEX = settings.TEMPLATES_FW + "/index.html"  # Главная страница
+TEMPLATE_PARAMETER = settings.TEMPLATES_FW + "/parameter.html"  # Страница индивидуальных параемтров
 
 
 # View Interface
@@ -67,13 +66,9 @@ class SimpleView(View):
 
         try:
             # Открываем шаблон по имени
-            with open(template_name, encoding=settings.HTML_ENCODING) as f:
-                # Читаем
-                template = Template(f.read())
-            # рендерим шаблон с параметрами
-            self.body = template.render(**kwargs)
+            self.body = Environ().jinja_env.get_template(template_name).render(**kwargs)
             self.status_code = status_code
-        except FileNotFoundError:
+        except TemplateNotFound:
             if not raise_filenotfound:
                 # Template not found
                 self.body = MinimalView("Страница {} не найдена".format(template_name)).body
@@ -87,18 +82,24 @@ class SimpleView(View):
 
 
 class View404(View):
+    BAD_URL_QUERY_PARAM = "page"
 
     @staticmethod
     def run(request: Request, *args, **kwargs):
-
+        # if this is the requested page, it means that we have to get the wrong url from query string
+        if request.path == settings.URL_NOT_FOUND:
+            bad_url = request.query_params.get(View404.BAD_URL_QUERY_PARAM, "")
+        # else the requested page called this class - get the current page path
+        else:
+            bad_url = request.path
         try:
             return SimpleView(status_code=settings.HTTP_CODE_NOTFOUND,
-                              template_name=PATH_TEMPLATES + TEMPLATE_404,
+                              template_name=TEMPLATE_404,
                               raise_filenotfound=True,
-                              title="Страница не найдена", parameter=request.path).run(request)
+                              title="Страница не найдена", parameter=bad_url).run(request)
         except FileNotFoundError:
             return MinimalView(status_code=settings.HTTP_CODE_NOTFOUND,
-                               body="Страница {} не найдена".format(request.path))
+                               body="Страница {} не найдена".format(bad_url))
 
 
 # *********************************************** BASE VIEW *******************************************************
@@ -127,7 +128,7 @@ class BaseViewTagData:
 # status_message - status message of the last template load operation
 # isInit - __init__() already called flag
 class BaseViewLayout(Singleton):
-    _PATH_BASEVIEW_TEMPLATES = "framework/templates/baseview/"   # путь к шаблонам html-страниц темплейтов BaseView
+    _PATH_BASEVIEW_TEMPLATES = settings.TEMPLATES_FW + "/baseview/"   # путь к шаблонам html-страниц темплейтов BaseView
     _template_settings = {
         BaseViewSection.base_view:
             BaseViewTagData(template_tag='base_view_template', html_include_tag='',
@@ -149,7 +150,7 @@ class BaseViewLayout(Singleton):
     _html_includes = {}                             # html includes to pass to renderer - currently empty
 
     # REQUIRED (call super() if redefined): Assign default base view template and include templates
-    def __init__(self, set_default_templates:bool = True, raise_filenotfound: bool = False):
+    def __init__(self, set_default_templates: bool = True, raise_filenotfound: bool = False):
 
         # Only allow to init once
         if hasattr(self, 'isInit'):
@@ -168,14 +169,12 @@ class BaseViewLayout(Singleton):
     # RETURNS: boolean status and Template object
     def _load_template(self, template_name: str, raise_filenotfound: bool = False):
         try:
-            # Open template file
-            with open(template_name, encoding=settings.HTML_ENCODING) as f:
-                # Read template file
-                template = Template(f.read())
-                self.status_code = settings.HTTP_CODE_OK
-                self.status_message = "OK"
-                return True, template
-        except FileNotFoundError:
+            # Read template file
+            template = Environ().jinja_env.get_template(template_name)
+            self.status_code = settings.HTTP_CODE_OK
+            self.status_message = "OK"
+            return True, template
+        except TemplateNotFound:
             # Template not found
             self.status_code = settings.HTTP_CODE_NOTFOUND
             self.status_message = template_name
@@ -232,16 +231,13 @@ class BaseView(View):
 
         try:
             # Открываем шаблон по имени
-            with open(template_name, encoding=settings.HTML_ENCODING) as f:
-                # Читаем
-                template = Template(f.read())
-
+            template = Environ().jinja_env.get_template(template_name)
             # Get BaseViewLayout singleton instance
             layout = BaseViewLayout()
             # Render the template tree
             self.body = template.render(**layout.templates, **layout.html_includes, **kwargs)
             self.status_code = status_code
-        except FileNotFoundError:
+        except TemplateNotFound:
             if not raise_filenotfound:
                 # Template not found
                 self.body = MinimalView("Страница {} не найдена".format(template_name)).body
@@ -268,7 +264,7 @@ class Admin(View):
         # Есть такой параметр WSGI/HTTP
         if request.path_array[len(request.path_array)-1] in request.environ:
             try:
-                return SimpleView(template_name=PATH_TEMPLATES + TEMPLATE_PARAMETER,
+                return SimpleView(template_name=TEMPLATE_PARAMETER,
                                   raise_filenotfound=True,
                                   title='Параметр запроса',
                                   params=request.environ,
@@ -276,11 +272,11 @@ class Admin(View):
             except FileNotFoundError:
                 return MinimalView("Параметр '{}' : {}"
                                    .format(request.path_array[2],
-                                       request.environ[request.path_array[len(request.path_array)-1]])).run(request)
+                                           request.environ[request.path_array[len(request.path_array)-1]])).run(request)
 
         # Корневая страница админки (e.g. /admin)
         elif request.path_array[len(request.path_array)-1] == self.admin_root:
-            return SimpleView(PATH_TEMPLATES + TEMPLATE_INDEX,
+            return SimpleView(TEMPLATE_INDEX,
                               title='АДМИН - Главная страница',
                               params=request.environ, query_params=request.query_params).run(request)
 

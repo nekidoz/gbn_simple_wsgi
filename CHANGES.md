@@ -282,6 +282,7 @@ To show the functionality, added a @url header to the Contact() view of the app 
 
 3. FRAMEWORK: Class-Based Views (CBV)
 
+(CHANGED on 16.04.2022, please see changes)
 The CBV concept and Mixin usage possibility has been implemented in the framework since 28.03.2022 
 (see 28.03.2022 - Lesson 3 homework).
 Its implementation description is provided here for convenience because implementing it was the homework for today. 
@@ -341,8 +342,10 @@ with headers/footers and sidebars. It can be further subclassed or called direct
 
 4. APP: Class-Based Views (CBV)
 
+(CHANGED on 16.04.2022, please see changes)
 The CBV concept and Mixins were used in the app since 28.03.2022 (see 28.03.2022 - Lesson 3 homework).
-The brief description of the classes is provided here for convenience because implementing it was the homework for today. 
+The brief description of the classes is provided here for convenience 
+because implementing it was the homework for today. 
 
 - All the app's view classes use the framework's BaseView class to render pages. 
 They do not subclass the BaseView class (see 28.03.2022 - Lesson 3 homework).
@@ -437,3 +440,80 @@ The usage model can be like this:
         
         Persistence.engine(Category).delete(category_id_to_delete)  # delete an entry
         Persistence.engine(Course).delete(course_id_to_delete)      # delete an entry
+
+##16.04.2022 - Lesson 8 Homework
+
+This release implements functionality not implemented in Lesson 6 Homework: 
+- creating a student record,
+- displaying the list of students,
+- assigning students to courses.
+
+1. FRAMEWORK: (!IMPORTANT!) Changed template file naming conventions after 
+adopting Environment and Loader objects of Jinja2 framework 
+to improve predictability of nested templates loading behaviour:
+- created Environ singleton class in framework/settings.py that initializes Jinja2 Environment 
+and assigns PrefixLoader loader to distinguish between the Framework and the App templates.
+    - "fw" file path prefix represents framework templates root directory, and
+    - "app" - the app templates root.
+
+    All the pathnames of templates should now be specified relative to this prefixes.
+    The app template root can be specified at the Environ class init.
+    Its intended usage looks as follows:
+    
+        env = Environ('appfolder/templates/')        # Create environment object at app startup and init template root
+        ...
+        # Load the template appfolder/templates/sometemplate.html and render it
+        result = Environ().jinja_env.get_template('app/sometemplate.html').render(**kwargs)
+        
+2. APP: Added Student class to register students and assign them to Courses.
+To accomplish that, reworked the ElementEditView class to make it a modular form for editing any types of data objects. 
+
+- The ElementEditView (element_edit.py) class subclasses the framework's View class 
+and implements basic editing (add/copy/modify/delete) capabilities for a database record form. 
+It uses the framework's BaseView class to render the page (see 02.04.2022 - Lesson 4 homework).
+It is used directly to edit Category records (category.py). 
+- The CourseEditView (course.py) class subclasses ElementEditView and implements fetching additional fields 
+to edit Course records.
+- The StudentEditView (student.py) class subclasses ElementEditView and implements fetching additional fields 
+to edit Student records.
+- The app uses urls.py config file as well as the @url decorator to configure its urls. 
+The configuration now looks as follows:
+
+        app_urls = [
+            Url('/', Index, {}, "Главная страница", True),
+            Url('/course/edit/*', CourseEditView,
+                {'element_class': Course,
+                 'element_html_class_name': "Course",
+                 'element_title': "Учебный курс",
+                 'html_template_form': settings.TEMPLATES_APP + "/element_edit.html",
+                 'editor_field_template_names': (settings.TEMPLATES_APP + "/element_edit_name_field.html",
+                                                 settings.TEMPLATES_APP + "/element_edit_category_field.html", ),
+                 },
+                "Курсы", False),
+]
+
+The editor_field_template_names dictionary entry contains a tuple of field templates 
+that are loaded and concatenated in the specified sequence and then included into the editor_fields section
+of the template specified in the html_template_form dictionary entry. 
+Now the element_edit.html template implements the ElementEditView class's main template 
+with the following on-demand field editing templates used for editing Category, Class and Student records:
+- element_edit_category_field.html - category selection drop-down list box returning category_id,
+- element_edit_course_field.html - course selection drop-down list box returning course_id,
+- element_edit_name_field.html - general text field returning name,
+- element_edit_person_fields.html - first_name, middle_name and last_name general text fields 
+returning respective values.
+
+To ease a list choice field creation in web forms, 
+build_choice_list() function was added to the new miscellaneous.py library file.
+It works with Persistence library and builds a list of categories specified in category_class 
+to display in web form's drop-down list boxes. 
+It gets the value of item_class.category_id_field with item_class.id = item_id and uses it 
+to set the top-most category in the list.
+It then puts an empty category and the rest of the categories in the list. 
+if the item doesn't have a category, it puts an empty category at the top of the list
+and the rest of the categories after it. So the resulting list looks like this:
+
+    [assigned category of the item]
+    <blank category (None)>
+    <All the other categories>
+    

@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import json
-from enum import Enum
 from uuid import UUID
 from pprint import pprint
 

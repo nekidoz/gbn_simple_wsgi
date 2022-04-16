@@ -24,6 +24,16 @@
                 <br>
                 <p><a href="course/edit/new_course"><center><b> Создать новый курс </b></center></a></p>
             </td>
+            <td style="vertical-align:top;padding-left:20px">
+                <h2>Список студентов</h2>
+                {% for student in students %}
+                    <p><a href="student/edit/{{ student.id }}">
+                        {{ student.last_name|e }} {{ student.first_name|e }} {{ student.middle_name|e }}
+                    </a></p>
+                {% endfor %}
+                <br>
+                <p><a href="student/edit/new_student"><center><b> Зарегистрировать нового студента </b></center></a></p>
+            </td>
         </tr>
     </table>
 
