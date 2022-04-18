@@ -20,10 +20,7 @@ class Student(PersistenceSerializable):
     def __init__(self, id: uuid.UUID = None,
                  first_name: str = None, middle_name: str = None, last_name: str = None,
                  course_id: uuid.UUID = None):
-        if id:
-            self.id = id
-        else:
-            self.id = uuid.uuid4()
+        self.id = id if id else uuid.uuid4()
         self.first_name = first_name
         self.middle_name = middle_name
         self.last_name = last_name

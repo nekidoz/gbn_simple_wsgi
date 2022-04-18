@@ -1,5 +1,5 @@
 """
-Чтобы запустить приложение, наберите: gunicorn simple_wsgi:application
+Чтобы запустить приложение, наберите: gunicorn -b 127.0.0.1:8000 app_student:app
 """
 
 from pprint import pprint
@@ -15,6 +15,7 @@ from logs import loggers, handlers
 from category import Category
 from course import Course
 from student import Student
+from feedback import Feedback
 
 import settings
 
@@ -29,7 +30,8 @@ log_r("Test runtime message")
 PersistenceSQLite.register()
 app = Framework(app_urls, use_admin=True)           # Create application object
 env = Environ(settings.PATH_JINJA_TEMPLATES)        # Create environment object
-if not (Category.register() and Course.register() and Student.register()):      # Initialize persistence data
+# Initialize persistence data
+if not (Category.register() and Course.register() and Student.register() and Feedback.register()):
     print("Failed to init data sources")
 layout = BaseViewLayout()                                   # Initialize the Base view
 if layout.status_code != 200:

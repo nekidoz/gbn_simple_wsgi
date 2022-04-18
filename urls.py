@@ -1,7 +1,8 @@
 # REFERENCE STRUCTURE
 from framework.urls import Url
 
-from views import Index, Contact
+from views import Index
+from feedback import FeedbackView, FeedbackListView
 from element_edit import ElementEditView
 from category import Category
 from course import Course, CourseEditView
@@ -39,5 +40,6 @@ app_urls = [
                                          settings.TEMPLATES_APP + "/element_edit_course_field.html", ),
          },
         "Курсы", False),
-    Url('/contact', Contact, {}, "Обратная связь", True)
+    Url('/contact', FeedbackView, {}, "Обратная связь", True),
+    Url('/feedback', FeedbackListView, {}, "Блог", True)
 ]

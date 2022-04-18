@@ -28,6 +28,11 @@ COURSES_STORAGE = ENGINE_SQLITE                         # Storage engine
 #STUDENTS_STORAGE = ENGINE_JSON                          # Storage engine
 STUDENTS_DATA_FILE = SQLITE_DATA_FILE                   # Data file
 STUDENTS_STORAGE = ENGINE_SQLITE                        # Storage engine
+# Feedback data config
+FEEDBACK_DATA_FILE = PATH_DB + "feedback.json"          # Data file
+FEEDBACK_STORAGE = ENGINE_JSON                          # Storage engine
+#FEEDBACK_DATA_FILE = SQLITE_DATA_FILE                   # Data file
+#FEEDBACK_STORAGE = ENGINE_SQLITE                        # Storage engine
 
 # Logger types
 LOGGER_DEBUG = "debug"                                  # Debug logger name

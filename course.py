@@ -16,10 +16,7 @@ class Course(PersistenceSerializable):
     category_id: uuid.UUID
 
     def __init__(self, id: uuid.UUID = None, name: str = None, category_id: uuid.UUID = None):
-        if id:
-            self.id = id
-        else:
-            self.id = uuid.uuid4()
+        self.id = id if id else uuid.uuid4()
         self.name = name
         self.category_id = category_id
 

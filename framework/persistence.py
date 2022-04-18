@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import json
+import os
 from uuid import UUID
 from pprint import pprint
+from pathlib import Path
+from datetime import datetime
 
 from framework import settings
 
@@ -16,12 +19,12 @@ class PersistenceEngine(ABC):
     def __init__(self, data_source: str, class_initializer):
         pass
 
-    # Get entity method, return stored data object; data object parameter needed to decode custom types
+    # Get element method, return stored data object
     @abstractmethod
     def get(self, element_id: UUID = None):
         pass
 
-    # Set entity to data object method, return success status
+    # Set the value of the element with matching id, or add a new element of no match, return success status
     @abstractmethod
     def set(self, element) -> bool:
         pass
@@ -29,6 +32,11 @@ class PersistenceEngine(ABC):
     # Delete the specified element
     @abstractmethod
     def delete(self, element_id: UUID) -> bool:
+        pass
+
+    # Append en element without checking whether an element with matching id exists
+    @abstractmethod
+    def append(self, element) -> bool:
         pass
 
 
@@ -57,6 +65,8 @@ class PersistenceJSONCodec(json.JSONEncoder):
     def default(self, data):
         if isinstance(data, UUID):          # Take care of UUIDs
             return data.hex
+        elif isinstance(data, datetime):
+            return data.isoformat()
         elif isinstance(data, PersistenceSerializable):
             # return dictionary of parameters if the right class
             return data.__dict__
@@ -126,7 +136,7 @@ class PersistenceJSON(PersistenceEngine):
             return True
         except FileNotFoundError as e:
             self.error_object = e
-            self.error_message = "JSON file not found while performing set(): {}".format(self.jsonFile)
+            self.error_message = "JSON file not found while dumping JSON array: {}".format(self.jsonFile)
             # self.print(self.error_message)
             return False
 
@@ -154,6 +164,23 @@ class PersistenceJSON(PersistenceEngine):
             array.remove(existing_element[0])
         # Write results
         return self._dump_array(array)
+
+    def append(self, element) -> bool:
+        if Path(self.jsonFile).is_file():
+            # open existing file for binary append to remove the trailing closing square bracket
+            with open(self.jsonFile, 'a+b') as f:    # , encoding=settings.HTML_ENCODING
+                f.seek(-1, os.SEEK_END)     # Seek the end of the file - 1 symbol,
+                f.truncate()                # truncate the closing square bracket
+            # reopen existing file for text append to add new element
+            with open(self.jsonFile, 'a+', encoding=settings.HTML_ENCODING) as f:
+                f.write(',\n')              # and add a line with comma, to continue the existing list of elements.
+                # Write element to json file, using custom JSON encoder for non-JSON-Serializable classes
+                json.dump(element, f, indent=4, cls=PersistenceJSONCodec)
+                f.write('\n]')              # Add a line with the closing bracket
+                return True
+        else:
+            # If file not found, fall back to set()
+            return self.set(element)
 
 
 # Class holding PersistenceEngine objects for all registered classes

@@ -93,3 +93,15 @@ class PersistenceSQLite(PersistenceEngine):
         self.cursor.execute(request, (element_id.hex if element_id.__class__ == UUID else element_id,))
         self.connection.commit()
         return True
+
+    def append(self, element) -> bool:
+        class_name = self.dataClass.__name__            # Get class name
+        values = []                                     # Build values list
+        for value in element.__dict__.values():
+            values.append(value.hex if value.__class__ == UUID else value)
+        key_string = ','.join(element.__dict__.keys())
+        parameter_str = ','.join('?' for _ in range(len(element.__dict__)))
+        request = f"insert into {class_name}({key_string}) values ({parameter_str})"
+        self.cursor.execute(request, values)
+        self.connection.commit()
+        return True

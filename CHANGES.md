@@ -406,7 +406,7 @@ NOTE that this class is NOT automatically registered with the Persistence class 
 
 The usage model can be like this:
 
-    from framework.persistemce import PersistenceSerializable, Persistence, ENGINE_JSON
+    from framework.persistence import PersistenceSerializable, Persistence, ENGINE_JSON
     from framework.persistence_sqlite import PersistenceSQLite
 
     class Course(PersistenceSerializable):      # Some custom class
@@ -465,7 +465,7 @@ and assigns PrefixLoader loader to distinguish between the Framework and the App
         # Load the template appfolder/templates/sometemplate.html and render it
         result = Environ().jinja_env.get_template('app/sometemplate.html').render(**kwargs)
         
-2. APP: Added Student class to register students and assign them to Courses.
+2. APP: Added Student class (student.py) to register students and assign them to Courses.
 To accomplish that, reworked the ElementEditView class to make it a modular form for editing any types of data objects. 
 
 - The ElementEditView (element_edit.py) class subclasses the framework's View class 
@@ -516,4 +516,57 @@ and the rest of the categories after it. So the resulting list looks like this:
     [assigned category of the item]
     <blank category (None)>
     <All the other categories>
+    
+##18.04.2022 - Lesson 9 Homework - Microservices
+
+1. (FIRST INTRODUCED ON 02.04.2022, MODIFIED on 14.04.2022)
+FRAMEWORK: Modified Persistence (database) functionality in /framework/persistence.py.
+The library implements get/set/delete functionality for custom classes.
+Custom class should contain an 'id' field identifying each class instance. 
+In case id is duplicated, more than one instance can be returned by the the library's data manipulating methods. 
+Currently implemented are the JSON and SQLite (sqlite3) storage engines.
+
+On 18.04.2022:
+- implemented append() method in PersistenceEngine class and subclasses which appends an instance record to the database 
+without checking its contents; it doesn't load existing records from storage and thus doesn't require an id field 
+in the stored class; together the get() and append() methods can be used to store records like e.g. logs and feedback
+which usually don't require search optimization and unique record capabilities.
+- note that append() is also implemented for JSON text files. 
+It doesn't read the entire file but rather appends the new encoded item to its end.
+For demo purposes, contact messages are stored in JSON (see notes below).
+
+2. APP: Modified the app's contact page (feedback.py):
+- Renamed the Contact class into FeedbackView and placed it in the separate file feedback.py; 
+its url remained the same: /contact .
+- Created Feedback class in feedback.py for storing feedback (contact messages) in Persistence storage.
+- Added FeedbackListView class in feedback.py to display the list of feedback messages, 
+top-most message being the latest; assigned it the /feedback url; added respective menu entry. 
+
+3. MICROSERVICE DEMO APP: Implemented Microservice demo app - app_student.py. 
+It doesn't use the main app's routines and data - only some of the settings.py constants.
+It actually implements the minimum functional web application based on the Framework.
+The Contact view is added to the app's url tree using a decorator to minimize configuration 
+(the app actually doesn't have any config files).  
+Run it with: 
+
+        gunicorn -b 127.0.0.1:8001 app_student:app
+
+    To run it together with the main app, run the main app with: 
+
+        gunicorn [-b 127.0.0.1:8000] app:app
+
+    The demo app implements the Contact class page used previously by the main app as its root (/) page. 
+    It gathers user's contact details and their message and saves it to a disk file
+    in the app/contact_messages directory. It then makes a POST request to the main app's URL:
+    
+        http://127.0.0.1:8000/contact
+        
+    and passes the contact message there for storage as if the main app's own /contact URL were called.
+    
+    To test the app:
+    - run the main app and the demo app;
+    - open http://127.0.0.1:8001 and leave a contact message;
+    - check the message in the app/contact_messages directory named as <current_datetime>_<user_email>;
+    - check the Feedback page of the main app at http://127.0.0.1:8000/feedback 
+    to see that the message appeared there at the top of the list.
     
