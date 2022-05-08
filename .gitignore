@@ -1,4 +1,6 @@
 __pycache__
 .idea/
-app/contact_messages/
-obsolete/
+dist/
+lightweb4py/demo/logs/
+lightweb4py/demo/obsolete/
+lightweb4py.egg-info/
