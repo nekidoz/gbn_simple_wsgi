@@ -1,4 +1,4 @@
-# lightweb4py - A lightweight WSGI framework with Router, CBV, ORM and Logger
+# lightweb4py - Lightweight WSGI framework with Router, CBV, ORM and Logger
 
 This framework allows for rapid development of applications to deal with HTTP requests from a WSGI server. 
 It implements:
